@@ -1,27 +1,31 @@
 /*************************************************************************
-Form  -  description
+FormeGeometrique  -  description
 -------------------
 debut                : 16/01/2015
 copyright            : (C) 2015 par B3424
 *************************************************************************/
 
-//---------- Interface de la classe <Form> (fichier Forme.h) ------
-#if ! defined ( FORME_H )
-#define FORME_H
+//---------- Interface de la classe <FormeGeometrique> (fichier FormeGeometrique.h) ------
+#if ! defined ( FORME_GEOMETRIQUE_H )
+#define FORME_GEOMETRIQUE_H
 
 //--------------------------------------------------- Interfaces utilisees
+#include <list>
 #include <string.h>
+#include "Forme.h"
+#include "Rectangle.h"
+#include "Selection.h"
 //------------------------------------------------------------- Constantes 
 
 //------------------------------------------------------------------ Types 
 
 //------------------------------------------------------------------------ 
-// Role de la classe <Form>
-//
+// Role de la classe <FormeGeometrique>
+//  represente une forme geometrique, gere l'interaction avec les selections
 //
 //------------------------------------------------------------------------ 
 
-class Forme
+class FormeGeometrique : public Forme
 {
 //----------------------------------------------------------------- PUBLIC
 
@@ -33,30 +37,55 @@ public:
     // Contrat :
     //  aucun
 
-    string GetNom();
+    virtual bool FaitPartieDe (Selection maSelection) = 0;
+    // Mode d'emploi :
+    //   renvoie true si la Forme fait partie du rectangle, false sinon
+    // Contrat :
+    //  aucun
+
+
+
+//------------------------------------------------- Surcharge d'operateurs
+    virtual ostream & operator << (ostream &os)=0;
+    // Mode d'emploi :
+    //  affiche la forme dans le flux os
+    // Contrat :
+    //  aucun
+
+    virtual istream & operator >> (istream &is)=0;
+    // Mode d'emploi :
+    //  stocke la forme dans le flux is
+    // Contrat :
+    //  aucun
+
+    void Disparaitre();
+    // Mode d'emploi :
+    //  retire des selections ou la forme geometrique (this) est presente
+    // Contrat :
+    //  aucun
 
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    Forme ();
+    FormeGeometrique ();
     // Mode d'emploi :
-    //   initialise le nom de la Forme
+    //  initialise les attributs de la classe
     // Contrat :
-    //   aucun
+    //  aucun
 
-    Forme (string nomForme);
+    FormeGeometrique (string nomForme);
     // Mode d'emploi :
-    //   initialise le nom de la Forme
+    //  initialise les attributs de la classe
     // Contrat :
-    //   aucun
+    //  aucun
 
-    virtual ~Forme ( );
+    virtual ~FormeGeometrique ( );
     // Mode d'emploi :
-    //   supprime les attributs de la forme
+    //  supprime proprement les attributs de la classe
     // Contrat :
-    //   aucun
+    //  aucun
 
-//------------------------------------------------------------------ PRIVE 
+//------------------------------------------------------------------ PRIVE
 
 protected:
 //----------------------------------------------------- Methodes protegees
@@ -66,9 +95,8 @@ private:
 
 protected:
 //----------------------------------------------------- Attributs proteges
-string nomForme;
+list<Selection*> parQuiSuisJeSelectionne;
 
-private:
 //------------------------------------------------------- Attributs prives
 
 //---------------------------------------------------------- Classes amies
@@ -79,6 +107,6 @@ private:
 
 };
 
-//----------------------------------------- Types dependants de <Form>
+//----------------------------------------- Types dependants de <FormeGeometrique>
 
-#endif // FORME_H
+#endif // FORME_GEOMETRIQUE_H

@@ -1,60 +1,61 @@
 /*************************************************************************
-Form  -  description
+Point  -  description
 -------------------
-debut                : 16/01/2015
+debut                : 17/01/2015
 copyright            : (C) 2015 par B3424
 *************************************************************************/
 
-//---------- Interface de la classe <Form> (fichier Forme.h) ------
-#if ! defined ( FORME_H )
-#define FORME_H
+//---------- Interface de la classe <Point> (fichier Point.h) ------
+#include "FormeGeometrique.h"
+
+#if ! defined ( POINT_H )
+#define POINT_H
 
 //--------------------------------------------------- Interfaces utilisees
-#include <string.h>
+
 //------------------------------------------------------------- Constantes 
 
 //------------------------------------------------------------------ Types 
 
 //------------------------------------------------------------------------ 
-// Role de la classe <Form>
+// Role de la classe <Point>
 //
 //
 //------------------------------------------------------------------------ 
 
-class Forme
+class Point
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //----------------------------------------------------- Methodes publiques
-    virtual void Deplacer (long dx, long dy) = 0;
+    void Deplacer ( long dx, long dy );
     // Mode d'emploi :
-    //   deplace la forme de dx en abscisse et dy en ordonne
+    //   deplace le point de dx en abscisse et dy en ordonnee
     // Contrat :
     //  aucun
 
-    string GetNom();
 
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    Forme ();
+    Point ();
     // Mode d'emploi :
-    //   initialise le nom de la Forme
+    //  initialise les attributs, et cree l'instance de l'objet
     // Contrat :
-    //   aucun
+    //  aucun
 
-    Forme (string nomForme);
+    Point (long x, long y);
     // Mode d'emploi :
-    //   initialise le nom de la Forme
+    //  initialise les attributs, et cree l'instance de l'objet
     // Contrat :
-    //   aucun
+    //  aucun
 
-    virtual ~Forme ( );
+    virtual ~Point ( );
     // Mode d'emploi :
-    //   supprime les attributs de la forme
+    //  supprime les attributs ainsi que l'instance de l'objet
     // Contrat :
-    //   aucun
+    //  aucun
 
 //------------------------------------------------------------------ PRIVE 
 
@@ -66,19 +67,20 @@ private:
 
 protected:
 //----------------------------------------------------- Attributs proteges
-string nomForme;
 
 private:
 //------------------------------------------------------- Attributs prives
+    long x;
+    long y;
 
 //---------------------------------------------------------- Classes amies
-
+friend class Rectangle;
 //-------------------------------------------------------- Classes privees
 
 //----------------------------------------------------------- Types prives
 
 };
 
-//----------------------------------------- Types dependants de <Form>
+//----------------------------------------- Types dependants de <Point>
 
-#endif // FORME_H
+#endif // POINT_H

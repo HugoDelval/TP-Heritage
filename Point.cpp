@@ -1,11 +1,11 @@
 /*************************************************************************
-Forme  -  description
+Point  -  description
 -------------------
-debut                : date
-copyright            : (C) ${year} par ${user}
+debut                : 17/01/2015
+copyright            : (C) 2015 par B3424
 *************************************************************************/
 
-//---------- Realisation de la classe <Forme> (fichier Forme.cpp) --
+//---------- Realisation de la classe <Point> (fichier Point.cpp) --
 
 //---------------------------------------------------------------- INCLUDE
 
@@ -14,7 +14,7 @@ using namespace std;
 #include <iostream>
 
 //------------------------------------------------------ Include personnel
-#include "Forme.h"
+#include "Point.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -27,37 +27,43 @@ using namespace std;
 //-------------------------------------------------------- Fonctions amies
 
 //----------------------------------------------------- Methodes publiques
-string Forme::GetNom ( )
-{
-    return nomForme;
-} //----- Fin de GetNom
+
+void Point::Deplacer(long dx, long dy) {
+    y+=dy;
+    x+=dx;
+}//----- Fin de Deplacer
+
+
+//------------------------------------------------- Surcharge d'operateurs
 
 
 //-------------------------------------------- Constructeurs - destructeur
 
-Forme::Forme ()
+Point::Point ( )
 {
-    this->nomForme = "";
+    x=0;
+    y=0;
 #ifdef MAP
-    cout << "Appel au constructeur de <Forme>" << endl;
+    cout << "Appel au constructeur de <Point>" << endl;
 #endif
-} //----- Fin de Forme
-
-Forme::Forme (string nomForme )
-{
-    this->nomForme = nomForme;
-#ifdef MAP
-    cout << "Appel au constructeur de <Forme>" << endl;
-#endif
-} //----- Fin de Forme
+} //----- Fin de Point
 
 
-Forme::~Forme ( )
+Point::Point(long x, long y) {
+    this->x=x;
+    this->y=y;
+#ifdef MAP
+    cout << "Appel au constructeur de <Point>" << endl;
+#endif
+} //----- Fin de Point
+
+
+Point::~Point ( )
 {
 #ifdef MAP
-    cout << "Appel au destructeur de <Forme>" << endl;
+    cout << "Appel au destructeur de <Point>" << endl;
 #endif
-} //----- Fin de ~Forme
+} //----- Fin de ~Point
 
 
 //------------------------------------------------------------------ PRIVE

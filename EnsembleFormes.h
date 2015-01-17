@@ -12,7 +12,9 @@ copyright            : (C) 2015 par B3424
 //--------------------------------------------------- Interfaces utilisées
 #include <string.h>
 #include <map>
-#include 'Forme.h'
+#include "Forme.h"
+#include "FormeGeometrique.h"
+#include "Selection.h"
 //------------------------------------------------------------- Constantes 
 
 //------------------------------------------------------------------ Types 
@@ -47,9 +49,15 @@ public:
     // Contrat :
     //  aucun
 
-    void Ajouter (Forme maForme, bool estUnFormeGeo=true);
+    void AjouterFormeGeo (FormeGeometrique maForme);
     // Mode d'emploi :
-    //  ajoute la Forme 'maForme' a la map correspondante (en fonction du bool), gere le cas ou cette Frome est une Selection
+    //  ajoute la Forme 'maForme' a la map correspondante
+    // Contrat :
+    //  aucun
+
+    void AjouterSelection (Selection maSelection);
+    // Mode d'emploi :
+    //  ajoute la Forme 'maSelection' a la map correspondante
     // Contrat :
     //  aucun
 
@@ -59,7 +67,7 @@ public:
     // Contrat :
     //  aucun
 
-    void Lister ();
+    void Lister () const;
     // Mode d'emploi :
     //  affiche toutes les FormeGeometrique
     // Contrat :
