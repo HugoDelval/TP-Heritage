@@ -12,8 +12,9 @@ copyright            : (C) 2015 par B3424
 
 //--------------------------------------------------- Interfaces utilisees
 #include <list>
-#include "Forme.h"
-#include "FormeGeometrique.h"
+#include "Rectangle.h"
+
+class Forme; // pour eviter l'inclusion cyclique
 
 //------------------------------------------------------------- Constantes 
 
@@ -59,7 +60,7 @@ public:
     // Contrat :
     //  aucun
 
-    Selection (string nom, Rectangle rectangleDeSelection);
+    Selection (string nom, Rectangle &rectangleDeSelection);
     // Mode d'emploi :
     //  initialise les attributs, et cree l'instance de l'objet
     // Contrat :

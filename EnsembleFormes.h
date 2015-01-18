@@ -12,7 +12,6 @@ copyright            : (C) 2015 par B3424
 //--------------------------------------------------- Interfaces utilisées
 #include <string.h>
 #include <map>
-#include "Forme.h"
 #include "FormeGeometrique.h"
 #include "Selection.h"
 //------------------------------------------------------------- Constantes 
@@ -49,13 +48,13 @@ public:
     // Contrat :
     //  aucun
 
-    void AjouterFormeGeo (FormeGeometrique maForme);
+    void AjouterFormeGeo (FormeGeometrique &maForme);
     // Mode d'emploi :
     //  ajoute la Forme 'maForme' a la map correspondante
     // Contrat :
     //  aucun
 
-    void AjouterSelection (Selection maSelection);
+    void AjouterSelection (Selection &maSelection);
     // Mode d'emploi :
     //  ajoute la Forme 'maSelection' a la map correspondante
     // Contrat :

@@ -11,9 +11,11 @@ copyright            : (C) 2015 par B3424
 #define RECTANGLE_H
 
 //--------------------------------------------------- Interfaces utilisees
-#include "FormeGeometrique.h"
 #include "Point.h"
+#include "FormeGeometrique.h"
 #include <string.h>
+class Selection; //pour eviter l'inclusion cyclique
+
 
 //------------------------------------------------------------- Constantes 
 
@@ -21,7 +23,7 @@ copyright            : (C) 2015 par B3424
 
 //------------------------------------------------------------------------ 
 // Role de la classe <Rectangle>
-//
+//  represente une forme rectangulaire
 //
 //------------------------------------------------------------------------ 
 
@@ -37,30 +39,19 @@ public:
     // Contrat :
     //  aucun
 
-    virtual bool FaitPartieDe(const Selection maSelection) const;
+    virtual bool FaitPartieDe(const Selection &maSelection) const;
     // Mode d'emploi :
-    //   renvoie true si le Rectangle fait partie du rectangleDeSelection, false sinon
+    //   renvoie true si le Rectangle fait partie de maSelection, false sinon
     // Contrat :
     //  aucun
 
-    bool Contient(Point p) const;
+    bool Contient(const Point &p) const;
     // Mode d'emploi :
     //   renvoie true si le Rectangle contient le point, false sinon
     // Contrat :
     //  aucun
 
 //------------------------------------------------- Surcharge d'operateurs
-    virtual ostream & operator << (ostream &os) const;
-    // Mode d'emploi :
-    //  affiche le Rectangle dans le flux os
-    // Contrat :
-    //  aucun
-
-    virtual istream & operator >> (istream &is);
-    // Mode d'emploi :
-    //  stocke le Rectangle dans le flux is
-    // Contrat :
-    //  aucun
 
 //-------------------------------------------- Constructeurs - destructeur
     Rectangle ();
@@ -75,7 +66,7 @@ public:
     // Contrat :
     //  aucun
 
-    Rectangle ( istream const &is );
+    Rectangle ( istream &is );
     // Mode d'emploi :
     //  initialise les attributs, et cree l'instance de l'objet
     // Contrat :
@@ -91,6 +82,8 @@ public:
 
 protected:
 //----------------------------------------------------- Methodes protegees
+    virtual istream& fluxRentrant(istream &is);
+    virtual ostream& fluxSortant(ostream &os);
 
 private:
 //------------------------------------------------------- Methodes privees
@@ -106,13 +99,16 @@ private:
     Point initial2;
 
 //---------------------------------------------------------- Classes amies
-
-//-------------------------------------------------------- Classes privees
+/*friend ostream & operator << (ostream &os, FormeGeometrique &r);
+friend istream & operator >> (istream &is, FormeGeometrique &r);
+*///-------------------------------------------------------- Classes privees
 
 //----------------------------------------------------------- Types prives
 
 };
 
 //----------------------------------------- Types dependants de <Rectangle>
+
+
 
 #endif // RECTANGLE_H

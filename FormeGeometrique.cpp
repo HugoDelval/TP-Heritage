@@ -15,7 +15,7 @@ using namespace std;
 
 //------------------------------------------------------ Include personnel
 #include "FormeGeometrique.h"
-
+#include "Selection.h"
 //------------------------------------------------------------- Constantes
 
 //---------------------------------------------------- Variables de classe
@@ -71,3 +71,10 @@ FormeGeometrique::~FormeGeometrique ( )
 
 //------------------------------------------------------- Methodes privees
 
+ostream &operator<<(ostream &os, FormeGeometrique &r) {
+    return r.fluxSortant(os);
+}
+
+istream &operator>>(istream &is, FormeGeometrique &r) {
+    return r.fluxRentrant(is);
+}

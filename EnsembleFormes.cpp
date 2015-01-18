@@ -26,7 +26,7 @@ using namespace std;
 
 //-------------------------------------------- Constructeurs - destructeur
 
-EnsembleFormes::EnsembleFormes ( )
+EnsembleFormes::EnsembleFormes ()
 {
 #ifdef MAP
     cout << "Appel au constructeur de <EnsembleFormes>" << endl;
@@ -34,7 +34,7 @@ EnsembleFormes::EnsembleFormes ( )
 } //----- Fin du constructeur EnsembleFormes
 
 
-EnsembleFormes::~EnsembleFormes ( )
+EnsembleFormes::~EnsembleFormes ()
 {
     Effacer();
 #ifdef MAP
@@ -93,12 +93,12 @@ void EnsembleFormes::Charger(string nomFichier)
 void EnsembleFormes::Supprimer(string nomForme, bool estUneFormeGeo)
 {
     if(estUneFormeGeo){
-        FormeGeometrique* fg = mesFormes.find(nomForme);
+        FormeGeometrique* fg = (mesFormes.find(nomForme)->second);
         fg->Disparaitre();
         mesFormes.erase(nomForme);
         delete fg;
     }else{
-        Selection* s = mesSelections.find(nomForme);
+        Selection* s = mesSelections.find(nomForme)->second;
         list<FormeGeometrique*> lesFormesASupprimer = s->GetFormesSelectionnees();
         for(list<FormeGeometrique*>::const_iterator ci=lesFormesASupprimer.begin() ; ci!=lesFormesASupprimer.end() ; ci++){
             FormeGeometrique* fg = (*ci);
@@ -111,28 +111,28 @@ void EnsembleFormes::Supprimer(string nomForme, bool estUneFormeGeo)
     }
 }
 
-void EnsembleFormes::AjouterFormeGeo (FormeGeometrique maForme)
+void EnsembleFormes::AjouterFormeGeo (FormeGeometrique &maForme)
 {
-    mesFormes.insert(pair(maForme.GetNom(), &maForme));
+    mesFormes.insert(pair<string,FormeGeometrique*>(maForme.GetNom(), &maForme));
 }
 
-void EnsembleFormes::AjouterSelection (Selection maSelection)
+void EnsembleFormes::AjouterSelection (Selection &maSelection)
 {
     list<FormeGeometrique*> mesFormesGeo;
     for(DicoFormeGeometrique::iterator i=mesFormes.begin() ; i!=mesFormes.end() ; i++){
         if(i->second->FaitPartieDe(maSelection))
             mesFormesGeo.push_front(i->second);
     }
-    mesSelections.insert(pair(maSelection.GetNom(), new Selection(maSelection.GetNom(), mesFormesGeo)));
+    mesSelections.insert(pair<string,Selection*>(maSelection.GetNom(), new Selection(maSelection.GetNom(), mesFormesGeo)));
 }
 
 void EnsembleFormes::Deplacer(string nomForme, long dx, long dy, bool estUneFormeGeo)
 {
     if(estUneFormeGeo){
-        FormeGeometrique* fg = mesFormes.find(nomForme);
+        FormeGeometrique* fg = mesFormes.find(nomForme)->second;
         fg->Deplacer(dx, dy);
     }else{
-        Selection* s = mesSelections.find(nomForme);
+        Selection* s = mesSelections.find(nomForme)->second;
         s->Deplacer(dx, dy);
     }
 }

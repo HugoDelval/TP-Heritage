@@ -16,6 +16,7 @@ using namespace std;
 
 //------------------------------------------------------ Include personnel
 #include "Rectangle.h"
+#include "Selection.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -28,7 +29,7 @@ using namespace std;
 //-------------------------------------------------------- Fonctions amies
 
 //----------------------------------------------------- Methodes publiques
-virtual void Rectangle::Deplacer(long dx, long dy)
+void Rectangle::Deplacer(long dx, long dy)
 {
     hautDroit.Deplacer(dx, dy);
     basGauche.Deplacer(dx, dy);
@@ -36,44 +37,18 @@ virtual void Rectangle::Deplacer(long dx, long dy)
     initial2.Deplacer(dx, dy);
 } //----- Fin de Deplacer
 
-virtual bool Rectangle::FaitPartieDe(const Selection maSelection) const
+bool Rectangle::FaitPartieDe(const Selection &maSelection) const
 {
     return maSelection.rectangleDeSelection.Contient(basGauche) && maSelection.rectangleDeSelection.Contient(hautDroit);
 }
 
-bool Rectangle::Contient(Point p) const
+bool Rectangle::Contient(const Point &p) const
 {
     return (p.x <= hautDroit.x)&&(p.x >= basGauche.y)&&(p.y <= hautDroit.y)&&(p.y >= basGauche.y);
 }
 
 //------------------------------------------------- Surcharge d'operateurs
 
-virtual ostream &Rectangle::operator<<(ostream &os) const{
-    os << nomForme+" "
-       << initial1.x + " "
-       << initial1.y + " "
-       << initial2.x + " "
-       << initial2.y;
-    return os;
-} //----- Fin de operator <<
-
-virtual istream &Rectangle::operator>>(istream &is) {
-    string x1="";
-    string x2="";
-    string y1="";
-    string y2="";
-
-    //getline(is,nomForme,' '); // pour le 'R'
-    getline(is,nomForme,' ');
-    getline(is,x1,' ');
-    getline(is,y1,' ');
-    getline(is,x2,' ');
-    getline(is,y2);
-
-    initialiser((long)(atoi(x1.c_str())), (long)(atoi(y1.c_str())), (long)(atoi(x2.c_str())), (long)(atoi(y2.c_str())));
-
-    return is;
-} //----- Fin de operator >>
 
 //-------------------------------------------- Constructeurs - destructeur
 
@@ -93,9 +68,9 @@ Rectangle::Rectangle(string nom, long x1, long y1, long x2, long y2) : FormeGeom
 #endif
 } //----- Fin de Rectangle
 
-Rectangle::Rectangle(istream const &is)
+Rectangle::Rectangle(istream &is)
 {
-    is>>(*this);
+    is >> (*this);
 }//----- Fin de Rectangle
 
 Rectangle::~Rectangle ( )
@@ -119,4 +94,32 @@ void Rectangle::initialiser(long x1, long y1, long x2, long y2) {
     initial2=Point(x2, y2);
     hautDroit=Point(x1>x2?x1:x2, y1>y2?y1:y2);
     hautDroit=Point(x1<x2?x1:x2, y1<y2?y1:y2);
+}
+
+istream& Rectangle::fluxRentrant(istream &is)
+{
+    string x1="";
+    string x2="";
+    string y1="";
+    string y2="";
+
+    //getline(is,nomForme,' '); // pour le 'R'
+    getline(is,nomForme,' ');
+    getline(is,x1,' ');
+    getline(is,y1,' ');
+    getline(is,x2,' ');
+    getline(is,y2);
+
+    initialiser((long)(atoi(x1.c_str())), (long)(atoi(y1.c_str())), (long)(atoi(x2.c_str())), (long)(atoi(y2.c_str())));
+    return is;
+}
+
+ostream& Rectangle::fluxSortant(ostream &os)
+{
+    os << nomForme+" "
+       << initial1.x + " "
+       << initial1.y + " "
+       << initial2.x + " "
+       << initial2.y;
+    return os;
 }

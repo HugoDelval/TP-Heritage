@@ -13,8 +13,7 @@ copyright            : (C) 2015 par B3424
 #include <list>
 #include <string.h>
 #include "Forme.h"
-#include "Rectangle.h"
-#include "Selection.h"
+class Selection;
 //------------------------------------------------------------- Constantes 
 
 //------------------------------------------------------------------ Types 
@@ -37,26 +36,15 @@ public:
     // Contrat :
     //  aucun
 
-    virtual bool FaitPartieDe (Selection maSelection) = 0;
+    virtual bool FaitPartieDe (const Selection &maSelection) const = 0;
     // Mode d'emploi :
-    //   renvoie true si la Forme fait partie du rectangle, false sinon
+    //   renvoie true si la Forme fait partie de maSelection, false sinon
     // Contrat :
     //  aucun
 
 
 
 //------------------------------------------------- Surcharge d'operateurs
-    virtual ostream & operator << (ostream &os)=0;
-    // Mode d'emploi :
-    //  affiche la forme dans le flux os
-    // Contrat :
-    //  aucun
-
-    virtual istream & operator >> (istream &is)=0;
-    // Mode d'emploi :
-    //  stocke la forme dans le flux is
-    // Contrat :
-    //  aucun
 
     void Disparaitre();
     // Mode d'emploi :
@@ -89,6 +77,8 @@ public:
 
 protected:
 //----------------------------------------------------- Methodes protegees
+    virtual istream& fluxRentrant(istream &is)=0;
+    virtual ostream& fluxSortant(ostream &os)=0;
 
 private:
 //------------------------------------------------------- Methodes privees
@@ -100,7 +90,8 @@ list<Selection*> parQuiSuisJeSelectionne;
 //------------------------------------------------------- Attributs prives
 
 //---------------------------------------------------------- Classes amies
-
+friend ostream & operator << (ostream &os, FormeGeometrique &r);
+friend istream & operator >> (istream &is, FormeGeometrique &r);
 //-------------------------------------------------------- Classes privees
 
 //----------------------------------------------------------- Types prives
@@ -108,5 +99,17 @@ list<Selection*> parQuiSuisJeSelectionne;
 };
 
 //----------------------------------------- Types dependants de <FormeGeometrique>
+
+ostream & operator << (ostream &os, FormeGeometrique &r);
+// Mode d'emploi :
+//  affiche la Forme dans le flux os
+// Contrat :
+//  aucun
+
+istream & operator >> (istream &is, FormeGeometrique &r);
+// Mode d'emploi :
+//  recupere la Forme dans le flux is
+// Contrat :
+//  aucun
 
 #endif // FORME_GEOMETRIQUE_H

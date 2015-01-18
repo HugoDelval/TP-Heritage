@@ -27,7 +27,7 @@ using namespace std;
 //-------------------------------------------------------- Fonctions amies
 
 //----------------------------------------------------- Methodes publiques
-virtual void Selection::Deplacer(long dx, long dy) {
+void Selection::Deplacer(long dx, long dy) {
     list<FormeGeometrique*>::iterator it = mesFormesGeo.begin();
     for ( it ; it != mesFormesGeo.end(); ++it)
         (*it)->Deplacer(dx, dy);
@@ -37,7 +37,7 @@ void Selection::Retirer(string nomForme) {
     list<FormeGeometrique*>::iterator i = mesFormesGeo.begin();
     bool pasFini = true;
     while(i!= mesFormesGeo.end() && pasFini){
-        if((*i)->nomForme.compare(nomForme)==0){
+        if((*i)->GetNom().compare(nomForme)==0){
             pasFini=false;
         }
     }
@@ -61,7 +61,7 @@ Selection::Selection () : Forme()
 #endif
 } //----- Fin de Selection
 
-Selection::Selection(string nom, Rectangle rectangleDeSelection) : Forme(nom)
+Selection::Selection(string nom, Rectangle &rectangleDeSelection) : Forme(nom)
 {
     this->rectangleDeSelection=rectangleDeSelection;
 #ifdef MAP
