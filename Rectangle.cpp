@@ -29,6 +29,13 @@ using namespace std;
 //-------------------------------------------------------- Fonctions amies
 
 //----------------------------------------------------- Methodes publiques
+
+FormeGeometrique* Rectangle::Copy() const
+{
+    return new Rectangle(*this);
+}
+
+
 void Rectangle::Deplacer(long dx, long dy)
 {
     hautDroit.Deplacer(dx, dy);
@@ -39,18 +46,30 @@ void Rectangle::Deplacer(long dx, long dy)
 
 bool Rectangle::FaitPartieDe(const Selection &maSelection) const
 {
-    return maSelection.rectangleDeSelection.Contient(basGauche) && maSelection.rectangleDeSelection.Contient(hautDroit);
+    return maSelection.rectangleDeSelection->Contient(basGauche) && maSelection.rectangleDeSelection->Contient(hautDroit);
 }
 
 bool Rectangle::Contient(const Point &p) const
 {
-    return (p.x <= hautDroit.x)&&(p.x >= basGauche.y)&&(p.y <= hautDroit.y)&&(p.y >= basGauche.y);
+    return (p.x <= hautDroit.x)&&(p.x >= basGauche.x)&&(p.y <= hautDroit.y)&&(p.y >= basGauche.y);
 }
 
 //------------------------------------------------- Surcharge d'operateurs
 
 
 //-------------------------------------------- Constructeurs - destructeur
+
+Rectangle::Rectangle(const Rectangle &unRectangle) : FormeGeometrique(unRectangle)
+{
+    hautDroit.x = unRectangle.hautDroit.x;
+    hautDroit.y = unRectangle.hautDroit.y;
+    basGauche.x = unRectangle.basGauche.x;
+    basGauche.y = unRectangle.basGauche.y;
+    initial1.x = unRectangle.initial1.x;
+    initial1.y = unRectangle.initial1.y;
+    initial2.x = unRectangle.initial2.x;
+    initial2.y = unRectangle.initial2.y;
+}
 
 Rectangle::Rectangle (): FormeGeometrique()
 {
@@ -90,10 +109,14 @@ Rectangle::~Rectangle ( )
 //------------------------------------------------------- Methodes privees
 
 void Rectangle::initialiser(long x1, long y1, long x2, long y2) {
-    initial1=Point(x1, y1);
-    initial2=Point(x2, y2);
-    hautDroit=Point(x1>x2?x1:x2, y1>y2?y1:y2);
-    hautDroit=Point(x1<x2?x1:x2, y1<y2?y1:y2);
+    initial1.x=x1;
+    initial1.y=y1;
+    initial2.x=x2;
+    initial2.y=y2;
+    hautDroit.x=x1>x2?x1:x2;
+    hautDroit.y=y1>y2?y1:y2;
+    basGauche.x=x1<x2?x1:x2;
+    basGauche.y=y1<y2?y1:y2;
 }
 
 istream& Rectangle::fluxRentrant(istream &is)
@@ -117,9 +140,12 @@ istream& Rectangle::fluxRentrant(istream &is)
 ostream& Rectangle::fluxSortant(ostream &os)
 {
     os << nomForme+" "
-       << initial1.x + " "
-       << initial1.y + " "
-       << initial2.x + " "
-       << initial2.y;
+       << initial1.x << " "
+       << initial1.y << " "
+       << initial2.x << " "
+       << initial2.y
+       << endl;
     return os;
 }
+
+

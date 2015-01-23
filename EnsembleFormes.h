@@ -16,9 +16,8 @@ copyright            : (C) 2015 par B3424
 #include "Selection.h"
 //------------------------------------------------------------- Constantes 
 
-//------------------------------------------------------------------ Types 
-typedef map<string, FormeGeometrique*> DicoFormeGeometrique;
-typedef map<string, Selection*> DicoSelection;
+//------------------------------------------------------------------ Types
+
 //------------------------------------------------------------------------
 // Rôle de la classe <EnsembleFormes>
 //  Stocke et gere toutes les FormesGeometriques et les Selections (ajout, suppression, deplacement...)
@@ -48,25 +47,25 @@ public:
     // Contrat :
     //  aucun
 
-    void AjouterFormeGeo (FormeGeometrique &maForme);
+    bool AjouterFormeGeo (FormeGeometrique* maForme);
     // Mode d'emploi :
     //  ajoute la Forme 'maForme' a la map correspondante
     // Contrat :
     //  aucun
 
-    void AjouterSelection (Selection &maSelection);
+    bool AjouterSelection (Selection* maSelection);
     // Mode d'emploi :
     //  ajoute la Forme 'maSelection' a la map correspondante
     // Contrat :
     //  aucun
 
-    void Deplacer (string nomForme, long dx, long dy, bool estUneFormeGeo=true);
+    void Deplacer (string nomForme, long dx, long dy);
     // Mode d'emploi :
     //  deplace la Forme de nom 'nomForme' de dx en abscisse et dy en ordonne, en gerant le cas ou cette Forme est une Selection
     // Contrat :
     //  aucun
 
-    void Lister () const;
+    void Lister ();
     // Mode d'emploi :
     //  affiche toutes les FormeGeometrique
     // Contrat :
@@ -79,6 +78,11 @@ public:
     //  aucun
 
 //-------------------------------------------- Constructeurs - destructeur
+    EnsembleFormes ( EnsembleFormes & unEnsembleFormes );
+    // Mode d'emploi (constructeur de copie) :
+    //  copie en profondeur (pas que les pointeurs) tous les attributs de l'objet en parametre.
+    // Contrat :
+    //  aucun
 
     EnsembleFormes ( );
 // Mode d'emploi :
@@ -98,6 +102,8 @@ private:
 //----------------------------------------------------- Méthodes privees
 
 //----------------------------------------------------- Attributs prives
+    typedef map<string, FormeGeometrique*> DicoFormeGeometrique;
+    typedef map<string, Selection*> DicoSelection;
     DicoFormeGeometrique mesFormes;
     DicoSelection mesSelections;
 };

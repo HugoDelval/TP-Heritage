@@ -39,7 +39,7 @@ public:
     // Contrat :
     //  aucun
 
-    virtual bool FaitPartieDe(const Selection &maSelection) const;
+    bool FaitPartieDe(const Selection &maSelection) const;
     // Mode d'emploi :
     //   renvoie true si le Rectangle fait partie de maSelection, false sinon
     // Contrat :
@@ -51,9 +51,17 @@ public:
     // Contrat :
     //  aucun
 
+    virtual FormeGeometrique* Copy() const;
+
 //------------------------------------------------- Surcharge d'operateurs
 
 //-------------------------------------------- Constructeurs - destructeur
+    Rectangle (const Rectangle &unRectangle );
+    // Mode d'emploi (constructeur de copie) :
+    //  copie en profondeur (pas que les pointeurs) tous les attributs de l'objet en parametre.
+    // Contrat :
+    //  aucun
+
     Rectangle ();
     // Mode d'emploi :
     //  initialise les attributs, et cree l'instance de l'objet

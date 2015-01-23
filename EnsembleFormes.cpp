@@ -26,6 +26,23 @@ using namespace std;
 
 //-------------------------------------------- Constructeurs - destructeur
 
+EnsembleFormes::EnsembleFormes ( EnsembleFormes & unEnsembleFormes )
+{
+    DicoFormeGeometrique::iterator i1 = unEnsembleFormes.mesFormes.begin();
+    for(i1 ; i1!=unEnsembleFormes.mesFormes.end() ; ++i1 )
+    {
+        mesFormes.insert(make_pair(i1->first,i1->second->Copy()));
+    }
+    DicoSelection::iterator i2 = unEnsembleFormes.mesSelections.begin();
+    for(i2 ; i2!=unEnsembleFormes.mesSelections.end() ; ++i2 )
+    {
+        mesSelections.insert(make_pair(i2->first,new Selection(*(i2->second))));
+    }
+#ifdef MAP
+    cout << "Appel au constructeur de copie de <EnsembleFormes>" << endl;
+#endif
+} //----- Fin de EnsembleFormes (constructeur de copie)
+
 EnsembleFormes::EnsembleFormes ()
 {
 #ifdef MAP
@@ -88,6 +105,8 @@ void EnsembleFormes::Charger(string nomFichier)
     {
         cout << "ERR" <<endl;
     }
+
+
 }
 
 void EnsembleFormes::Supprimer(string nomForme, bool estUneFormeGeo)
@@ -100,7 +119,7 @@ void EnsembleFormes::Supprimer(string nomForme, bool estUneFormeGeo)
     }else{
         Selection* s = mesSelections.find(nomForme)->second;
         list<FormeGeometrique*> lesFormesASupprimer = s->GetFormesSelectionnees();
-        for(list<FormeGeometrique*>::const_iterator ci=lesFormesASupprimer.begin() ; ci!=lesFormesASupprimer.end() ; ci++){
+        for(list<FormeGeometrique*>::const_iterator ci=lesFormesASupprimer.begin() ; ci!=lesFormesASupprimer.end() ; ++ci){
             FormeGeometrique* fg = (*ci);
             fg->Disparaitre();
             mesFormes.erase(fg->GetNom());
@@ -109,26 +128,42 @@ void EnsembleFormes::Supprimer(string nomForme, bool estUneFormeGeo)
         mesSelections.erase(nomForme);
         delete s;
     }
+
+
 }
 
-void EnsembleFormes::AjouterFormeGeo (FormeGeometrique &maForme)
+bool EnsembleFormes::AjouterFormeGeo (FormeGeometrique* maForme)
 {
-    mesFormes.insert(pair<string,FormeGeometrique*>(maForme.GetNom(), &maForme));
-}
-
-void EnsembleFormes::AjouterSelection (Selection &maSelection)
-{
-    list<FormeGeometrique*> mesFormesGeo;
-    for(DicoFormeGeometrique::iterator i=mesFormes.begin() ; i!=mesFormes.end() ; i++){
-        if(i->second->FaitPartieDe(maSelection))
-            mesFormesGeo.push_front(i->second);
+    bool res=false;
+    if(mesSelections.find(maForme->GetNom()) == mesSelections.end() )
+    {
+        pair<DicoFormeGeometrique::iterator,bool> p = mesFormes.insert(pair<string,FormeGeometrique*>(maForme->GetNom(), maForme));
+        res = p.second;
     }
-    mesSelections.insert(pair<string,Selection*>(maSelection.GetNom(), new Selection(maSelection.GetNom(), mesFormesGeo)));
+    return res;
 }
 
-void EnsembleFormes::Deplacer(string nomForme, long dx, long dy, bool estUneFormeGeo)
+bool EnsembleFormes::AjouterSelection (Selection* maSelection)
 {
-    if(estUneFormeGeo){
+    bool res = false;
+    if(mesFormes.find(maSelection->GetNom()) == mesFormes.end())
+    {
+        list<FormeGeometrique*> mesFormesGeo;
+        for(DicoFormeGeometrique::iterator i=mesFormes.begin() ; i!=mesFormes.end() ; ++i){
+            if(i->second->FaitPartieDe(*maSelection))
+            {
+                mesFormesGeo.push_front(i->second);
+            }
+        }
+        pair<DicoSelection::iterator,bool> p = mesSelections.insert(pair<string,Selection*>(maSelection->GetNom(), new Selection(maSelection->GetNom(), mesFormesGeo)));
+        res = p.second;
+    }
+    return res;
+}
+
+void EnsembleFormes::Deplacer(string nomForme, long dx, long dy)
+{
+    if(mesFormes.find(nomForme) != mesFormes.end()){
         FormeGeometrique* fg = mesFormes.find(nomForme)->second;
         fg->Deplacer(dx, dy);
     }else{
@@ -137,21 +172,23 @@ void EnsembleFormes::Deplacer(string nomForme, long dx, long dy, bool estUneForm
     }
 }
 
-void EnsembleFormes::Lister() const
+void EnsembleFormes::Lister()
 {
-    for(DicoFormeGeometrique::const_iterator ci=mesFormes.begin() ; ci!=mesFormes.end() ; ci++){
-        cout << ci->second;
+    for(DicoFormeGeometrique::iterator i=mesFormes.begin() ; i!=mesFormes.end() ; ++i){
+        cout << *(i->second);
     }
 }
 
 void EnsembleFormes::Effacer()
 {
-    for(DicoFormeGeometrique::iterator i=mesFormes.begin() ; i!=mesFormes.end() ; i++){
+    for(DicoFormeGeometrique::iterator i=mesFormes.begin() ; i!=mesFormes.end() ; ++i){
         delete i->second;
     }
-    for(DicoSelection::iterator i=mesSelections.begin() ; i!=mesSelections.end() ; i++){
+    for(DicoSelection::iterator i=mesSelections.begin() ; i!=mesSelections.end() ; ++i){
         delete i->second;
     }
     mesFormes.clear();
     mesSelections.clear();
+
+
 }

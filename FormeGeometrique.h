@@ -30,13 +30,13 @@ class FormeGeometrique : public Forme
 
 public:
 //----------------------------------------------------- Methodes publiques
-    virtual void Deplacer (long dx, long dy) = 0;
+    virtual void Deplacer(long dx, long dy)=0;
     // Mode d'emploi :
     //   deplace la forme de dx en abscisse et dy en ordonne
     // Contrat :
     //  aucun
 
-    virtual bool FaitPartieDe (const Selection &maSelection) const = 0;
+    virtual bool FaitPartieDe (const Selection &maSelection) const;
     // Mode d'emploi :
     //   renvoie true si la Forme fait partie de maSelection, false sinon
     // Contrat :
@@ -52,8 +52,16 @@ public:
     // Contrat :
     //  aucun
 
+    virtual FormeGeometrique* Copy() const;
+
 
 //-------------------------------------------- Constructeurs - destructeur
+
+    FormeGeometrique (const FormeGeometrique &uneFormeGeometrique);
+    // Mode d'emploi :
+    //  initialise les attributs, et cree l'instance de l'objet
+    // Contrat :
+    //  aucun
 
     FormeGeometrique ();
     // Mode d'emploi :
@@ -67,6 +75,12 @@ public:
     // Contrat :
     //  aucun
 
+    FormeGeometrique (string nom, list<Selection*> parQuiSuisJeSelectionne);
+    // Mode d'emploi :
+    //  initialise les attributs, et cree l'instance de l'objet
+    // Contrat :
+    //  aucun
+
     virtual ~FormeGeometrique ( );
     // Mode d'emploi :
     //  supprime proprement les attributs de la classe
@@ -77,8 +91,8 @@ public:
 
 protected:
 //----------------------------------------------------- Methodes protegees
-    virtual istream& fluxRentrant(istream &is)=0;
-    virtual ostream& fluxSortant(ostream &os)=0;
+    virtual istream& fluxRentrant(istream &is);
+    virtual ostream& fluxSortant(ostream &os);
 
 private:
 //------------------------------------------------------- Methodes privees

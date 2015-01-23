@@ -1,8 +1,10 @@
 #include <iostream>
+#include "Application.h"
 
 using namespace std;
 
 int main() {
-    cout << "Hello, World!" << endl;
+    Application app;
+    app.LancerApplication();
     return 0;
 }

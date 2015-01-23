@@ -54,19 +54,25 @@ public:
 
 
 //-------------------------------------------- Constructeurs - destructeur
+    Selection (Selection & uneSelection );
+    // Mode d'emploi (constructeur de copie) :
+    //  copie en profondeur (pas que les pointeurs) tous les attributs de l'objet en parametre.
+    // Contrat :
+    //  aucun
+
     Selection ();
     // Mode d'emploi :
     //  initialise les attributs, et cree l'instance de l'objet
     // Contrat :
     //  aucun
 
-    Selection (string nom, Rectangle &rectangleDeSelection);
+    Selection (string nom, Rectangle *rectangleDeSelection);
     // Mode d'emploi :
     //  initialise les attributs, et cree l'instance de l'objet
     // Contrat :
     //  aucun
 
-    Selection (string nom, list<FormeGeometrique*> mesFormesGeo);
+    Selection (string nom, list<FormeGeometrique*> &mesFormesGeo);
     // Mode d'emploi :
     //  initialise les attributs, et cree l'instance de l'objet
     // Contrat :
@@ -92,7 +98,7 @@ protected:
 private:
 //------------------------------------------------------- Attributs prives
     list<FormeGeometrique*> mesFormesGeo; // tableau de Formes
-    Rectangle rectangleDeSelection;
+    Rectangle *rectangleDeSelection;
 
 //---------------------------------------------------------- Classes amies
 friend class Rectangle;

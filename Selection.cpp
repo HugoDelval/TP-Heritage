@@ -30,7 +30,9 @@ using namespace std;
 void Selection::Deplacer(long dx, long dy) {
     list<FormeGeometrique*>::iterator it = mesFormesGeo.begin();
     for ( it ; it != mesFormesGeo.end(); ++it)
+    {
         (*it)->Deplacer(dx, dy);
+    }
 } //----- Fin de Deplacer
 
 void Selection::Retirer(string nomForme) {
@@ -53,6 +55,15 @@ list<FormeGeometrique*> Selection::GetFormesSelectionnees() const {
 
 
 //-------------------------------------------- Constructeurs - destructeur
+Selection::Selection(Selection &uneSelection)
+{
+    nomForme = uneSelection.nomForme;
+    list<FormeGeometrique*>::iterator i = uneSelection.mesFormesGeo.begin();
+    for(i ; i!= uneSelection.mesFormesGeo.end() ; ++i)
+    {
+        mesFormesGeo.push_back((*i)->Copy());
+    }
+}
 
 Selection::Selection () : Forme()
 {
@@ -61,17 +72,17 @@ Selection::Selection () : Forme()
 #endif
 } //----- Fin de Selection
 
-Selection::Selection(string nom, Rectangle &rectangleDeSelection) : Forme(nom)
+Selection::Selection(string nom, Rectangle* rectangleDeSelection) : Forme(nom)
 {
-    this->rectangleDeSelection=rectangleDeSelection;
+    this->rectangleDeSelection = rectangleDeSelection;
 #ifdef MAP
     cout << "Appel au constructeur de <Selection>" << endl;
 #endif
 }
 
-Selection::Selection(string nom, list<FormeGeometrique *> mesFormesGeo) : Forme(nom)
+Selection::Selection(string nom, list<FormeGeometrique *> &mesFormesGeo) : Forme(nom)
 {
-    this->mesFormesGeo = mesFormesGeo;
+    (this->mesFormesGeo) = mesFormesGeo;
 #ifdef MAP
     cout << "Appel au constructeur de <Selection>" << endl;
 #endif
@@ -90,5 +101,4 @@ Selection::~Selection ( )
 //----------------------------------------------------- Methodes protegees
 
 //------------------------------------------------------- Methodes privees
-
 

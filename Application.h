@@ -53,20 +53,29 @@ virtual ~Application ( );
 
 private:
 //----------------------------------------------------- Méthodes privees
-    void undo ();
+
+    bool undo ();
     // Mode d'emploi :
     //  recule d'un etat dans la liste des etats, si c'est possible
     // Contrat :
     //  aucun
 
-    void redo ();
+    bool redo ();
     // Mode d'emploi :
     //  avance d'un etat dans la liste des etats, si c'est possible
     // Contrat :
     //  aucun
+
+    void eraseAllFrom(list<EnsembleFormes*>::iterator debut);
+    // Mode d'emploi :
+    //  supprime tout depuis 'debut' jusqu'à la fin de la liste
+    // Contrat :
+    //  aucun
+
 //----------------------------------------------------- Attributs prives
     list<EnsembleFormes*> listeEtats;
-    EnsembleFormes* etatCourant;
+    list<EnsembleFormes*>::iterator etatCourant;
+
 };
 
 //--------------------------- Autres définitions dépendantes de <Application>
