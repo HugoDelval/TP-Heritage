@@ -26,14 +26,14 @@ using namespace std;
 
 //-------------------------------------------- Constructeurs - destructeur
 
-EnsembleFormes::EnsembleFormes ( EnsembleFormes & unEnsembleFormes )
+EnsembleFormes::EnsembleFormes (const EnsembleFormes & unEnsembleFormes )
 {
-    DicoFormeGeometrique::iterator i1 = unEnsembleFormes.mesFormes.begin();
+    DicoFormeGeometrique::const_iterator i1 = unEnsembleFormes.mesFormes.begin();
     for(i1 ; i1!=unEnsembleFormes.mesFormes.end() ; ++i1 )
     {
         mesFormes.insert(make_pair(i1->first,i1->second->Copy()));
     }
-    DicoSelection::iterator i2 = unEnsembleFormes.mesSelections.begin();
+    DicoSelection::const_iterator i2 = unEnsembleFormes.mesSelections.begin();
     for(i2 ; i2!=unEnsembleFormes.mesSelections.end() ; ++i2 )
     {
         mesSelections.insert(make_pair(i2->first,new Selection(*(i2->second))));
@@ -109,27 +109,35 @@ void EnsembleFormes::Charger(string nomFichier)
 
 }
 
-void EnsembleFormes::Supprimer(string nomForme, bool estUneFormeGeo)
+bool EnsembleFormes::Supprimer(string nomForme, bool estUneFormeGeo)
 {
+    bool res=false;
     if(estUneFormeGeo){
-        FormeGeometrique* fg = (mesFormes.find(nomForme)->second);
-        fg->Disparaitre();
-        mesFormes.erase(nomForme);
-        delete fg;
-    }else{
-        Selection* s = mesSelections.find(nomForme)->second;
-        list<FormeGeometrique*> lesFormesASupprimer = s->GetFormesSelectionnees();
-        for(list<FormeGeometrique*>::const_iterator ci=lesFormesASupprimer.begin() ; ci!=lesFormesASupprimer.end() ; ++ci){
-            FormeGeometrique* fg = (*ci);
+        DicoFormeGeometrique::iterator i = (mesFormes.find(nomForme));
+        if(i!=mesFormes.end())
+        {
+            res=true;
+            FormeGeometrique* fg = (i->second);
             fg->Disparaitre();
-            mesFormes.erase(fg->GetNom());
-            delete fg;
+            mesFormes.erase(i);
         }
-        mesSelections.erase(nomForme);
-        delete s;
+    }else{
+        DicoSelection::iterator i = mesSelections.find(nomForme);
+        if(i!=mesSelections.end())
+        {
+            res=true;
+            Selection* s = i->second;
+            list<FormeGeometrique*> lesFormesASupprimer = s->GetFormesSelectionnees();
+            for(list<FormeGeometrique*>::const_iterator ci=lesFormesASupprimer.begin() ; ci!=lesFormesASupprimer.end() ; ++ci){
+                FormeGeometrique* fg = (*ci);
+                fg->Disparaitre();
+                mesFormes.erase(fg->GetNom());
+                delete fg;
+            }
+            mesSelections.erase(i);
+        }
     }
-
-
+    return res;
 }
 
 bool EnsembleFormes::AjouterFormeGeo (FormeGeometrique* maForme)
@@ -164,8 +172,7 @@ bool EnsembleFormes::AjouterSelection (Selection* maSelection)
 void EnsembleFormes::Deplacer(string nomForme, long dx, long dy)
 {
     if(mesFormes.find(nomForme) != mesFormes.end()){
-        FormeGeometrique* fg = mesFormes.find(nomForme)->second;
-        fg->Deplacer(dx, dy);
+        mesFormes.find(nomForme)->second->Deplacer(dx, dy);
     }else{
         Selection* s = mesSelections.find(nomForme)->second;
         s->Deplacer(dx, dy);

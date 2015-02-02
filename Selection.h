@@ -54,7 +54,7 @@ public:
 
 
 //-------------------------------------------- Constructeurs - destructeur
-    Selection (Selection & uneSelection );
+    Selection (const Selection & uneSelection );
     // Mode d'emploi (constructeur de copie) :
     //  copie en profondeur (pas que les pointeurs) tous les attributs de l'objet en parametre.
     // Contrat :

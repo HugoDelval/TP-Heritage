@@ -28,6 +28,7 @@ using namespace std;
 
 //----------------------------------------------------- Methodes publiques
 void Selection::Deplacer(long dx, long dy) {
+
     list<FormeGeometrique*>::iterator it = mesFormesGeo.begin();
     for ( it ; it != mesFormesGeo.end(); ++it)
     {
@@ -55,10 +56,9 @@ list<FormeGeometrique*> Selection::GetFormesSelectionnees() const {
 
 
 //-------------------------------------------- Constructeurs - destructeur
-Selection::Selection(Selection &uneSelection)
+Selection::Selection(const Selection &uneSelection) : Forme(uneSelection.nomForme)
 {
-    nomForme = uneSelection.nomForme;
-    list<FormeGeometrique*>::iterator i = uneSelection.mesFormesGeo.begin();
+    list<FormeGeometrique*>::const_iterator i = uneSelection.mesFormesGeo.begin();
     for(i ; i!= uneSelection.mesFormesGeo.end() ; ++i)
     {
         mesFormesGeo.push_back((*i)->Copy());

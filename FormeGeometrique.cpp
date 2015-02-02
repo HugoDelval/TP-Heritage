@@ -36,32 +36,30 @@ void FormeGeometrique::Disparaitre()
 }//----- Fin de Disparaitre
 
 //void FormeGeometrique::Deplacer(long dx, long dy) {cout<<"wrong deplacer"<<endl;}
-bool FormeGeometrique::FaitPartieDe(const Selection &maSelection) const {return false;}
+//bool FormeGeometrique::FaitPartieDe(const Selection &maSelection) const {return false;}
 
-FormeGeometrique* FormeGeometrique::Copy() const
+/*FormeGeometrique* FormeGeometrique::Copy() const
 {
-    /*list<Selection *> parQuiSuisJeSel;
+    list<Selection *> parQuiSuisJeSel;
     list<Selection *>::const_iterator i = parQuiSuisJeSelectionne.begin();
     for(i ; i!=parQuiSuisJeSelectionne.end() ; ++i)
     {
         parQuiSuisJeSel.push_back(*i);
-    }*/
-    /* n'est jamais appele */
+    }
     return nullptr;
-}
+}*/
 
 //------------------------------------------------- Surcharge d'operateurs
 
 
 //-------------------------------------------- Constructeurs - destructeur
 
-FormeGeometrique::FormeGeometrique(const FormeGeometrique &uneFormeGeometrique)
+FormeGeometrique::FormeGeometrique(const FormeGeometrique &uneFormeGeometrique) : Forme(uneFormeGeometrique.nomForme)
 {
-    nomForme=uneFormeGeometrique.nomForme;
     list<Selection *>::const_iterator i = uneFormeGeometrique.parQuiSuisJeSelectionne.begin();
     for(i ; i!=uneFormeGeometrique.parQuiSuisJeSelectionne.end() ; ++i)
     {
-        parQuiSuisJeSelectionne.push_back(*i);
+        parQuiSuisJeSelectionne.push_back(new Selection(**i));
     }
 }
 

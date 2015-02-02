@@ -12,6 +12,7 @@ copyright            : (C) 2015 par B3424
 //--------------------------------------------------- Interfaces utilisées
 #include <list>
 #include "EnsembleFormes.h"
+#include "Commande.h"
 //------------------------------------------------------------- Constantes 
 
 //------------------------------------------------------------------ Types 
@@ -19,7 +20,6 @@ copyright            : (C) 2015 par B3424
 //------------------------------------------------------------------------ 
 // Rôle de la classe <Application>
 //  gere les commandes utilisateur et modifie son EnsembleFormes en consequences.
-//  Gere egalement les undo et redo.
 //------------------------------------------------------------------------ 
 
 class Application
@@ -66,15 +66,16 @@ private:
     // Contrat :
     //  aucun
 
-    void eraseAllFrom(list<EnsembleFormes*>::iterator debut);
+    void eraseAllFrom(list<Commande*>::iterator debut);
     // Mode d'emploi :
     //  supprime tout depuis 'debut' jusqu'à la fin de la liste
     // Contrat :
     //  aucun
 
 //----------------------------------------------------- Attributs prives
-    list<EnsembleFormes*> listeEtats;
-    list<EnsembleFormes*>::iterator etatCourant;
+    EnsembleFormes* maStructure;
+    list<Commande*>::iterator etatCourant;
+    list<Commande*> listeEtats;
 
 };
 

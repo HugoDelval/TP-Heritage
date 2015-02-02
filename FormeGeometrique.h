@@ -36,15 +36,13 @@ public:
     // Contrat :
     //  aucun
 
-    virtual bool FaitPartieDe (const Selection &maSelection) const;
+    virtual bool FaitPartieDe (const Selection &maSelection) const = 0;
     // Mode d'emploi :
     //   renvoie true si la Forme fait partie de maSelection, false sinon
     // Contrat :
     //  aucun
 
-
-
-//------------------------------------------------- Surcharge d'operateurs
+    virtual FormeGeometrique* Copy() const = 0;
 
     void Disparaitre();
     // Mode d'emploi :
@@ -52,7 +50,9 @@ public:
     // Contrat :
     //  aucun
 
-    virtual FormeGeometrique* Copy() const;
+
+//------------------------------------------------- Surcharge d'operateurs
+
 
 
 //-------------------------------------------- Constructeurs - destructeur

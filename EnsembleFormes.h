@@ -41,7 +41,7 @@ public:
     // Contrat :
     //  aucun
 
-    void Supprimer (string nomForme, bool estUneFormeGeo=true);
+    bool Supprimer (string nomForme, bool estUneFormeGeo=true);
     // Mode d'emploi :
     //  supprime la Forme du nom 'nomForme' en gerant le cas ou cette Forme est une Selection
     // Contrat :
@@ -78,7 +78,7 @@ public:
     //  aucun
 
 //-------------------------------------------- Constructeurs - destructeur
-    EnsembleFormes ( EnsembleFormes & unEnsembleFormes );
+    EnsembleFormes (const EnsembleFormes & unEnsembleFormes );
     // Mode d'emploi (constructeur de copie) :
     //  copie en profondeur (pas que les pointeurs) tous les attributs de l'objet en parametre.
     // Contrat :

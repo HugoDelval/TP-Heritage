@@ -16,6 +16,7 @@ using namespace std;
 
 //------------------------------------------------------ Include personnel
 #include "Application.h"
+#include "CommandeAjoutFormeGeo.h"
 #include <sstream>
 
 //------------------------------------------------------------- Constantes
@@ -29,11 +30,11 @@ void Application::LancerApplication ()
     string commande="";
     string type="";
     bool sortir = false;
-    EnsembleFormes* nouvelEtat = new EnsembleFormes();
-    listeEtats.push_back(nouvelEtat);
     etatCourant=listeEtats.begin();
+    maStructure=new EnsembleFormes();
     FormeGeometrique* formeAAjouter;
     Selection* selectionAAjouter;
+    Commande* nouvelleCommande;
     while(!sortir)
     {
         getline(cin,commande);
@@ -56,12 +57,11 @@ void Application::LancerApplication ()
             iss >> x2;
             iss >> y2;
             formeAAjouter=new Rectangle(name,atoi(x1.c_str()),atoi(y1.c_str()),atoi(x2.c_str()),atoi(y2.c_str()));
-            nouvelEtat=new EnsembleFormes(**etatCourant);
-            bool bienInsere = nouvelEtat->AjouterFormeGeo(formeAAjouter);
-            if(bienInsere)
+            nouvelleCommande=new CommandeAjoutFormeGeo(maStructure,formeAAjouter);
+            if(nouvelleCommande->FaireCommande())
             {
                 eraseAllFrom(etatCourant);
-                listeEtats.push_back(nouvelEtat);
+                listeEtats.push_back(nouvelleCommande);
                 etatCourant++;
                 cout<<"OK"<<endl;
             }else{
@@ -82,34 +82,33 @@ void Application::LancerApplication ()
             iss >> y2;
             Rectangle r(name+"RectangleAssociee",atoi(x1.c_str()),atoi(y1.c_str()),atoi(x2.c_str()),atoi(y2.c_str()));
             selectionAAjouter=new Selection(name,&r);
-            nouvelEtat=new EnsembleFormes(**etatCourant);
-            bool bienInsere = nouvelEtat->AjouterSelection(selectionAAjouter);
-            if(bienInsere)
+            if(maStructure->AjouterSelection(selectionAAjouter))
             {
-                eraseAllFrom(etatCourant);
-                listeEtats.push_back(nouvelEtat);
-                etatCourant++;
                 cout<<"OK"<<endl;
             }else{
                 cout<<"ERR"<<endl;
             }
         }else if(type.compare("DELETE")==0){
             // suppession
-            cout<< "commande DELETE"<<endl;
+
+
+
         }else if(type.compare("MOVE")==0){
             string name,dx,dy;
             iss >> name;
             iss >> dx;
             iss >> dy;
-            nouvelEtat=new EnsembleFormes(**etatCourant);
-            nouvelEtat->Deplacer(name,atoi(dx.c_str()),atoi(dy.c_str()));
-            eraseAllFrom(etatCourant);
-            listeEtats.push_back(nouvelEtat);
-            etatCourant++;
-            cout<<"OK"<<endl;
+        //    nouvelleCommande=new CommandeDeplacer(maStructure,name,atoi(dx.c_str()),atoi(dy.c_str()));;
+            if(nouvelleCommande->FaireCommande())
+            {
+                eraseAllFrom(etatCourant);
+                listeEtats.push_back(nouvelleCommande);
+                etatCourant++;
+                cout<<"OK"<<endl;
+            }
         }else if(type.compare("LIST")==0){
             // enumerer
-            (*etatCourant)->Lister();
+            maStructure->Lister();
         }else if(type.compare("UNDO")==0){
             if(undo())
             {
@@ -140,6 +139,7 @@ void Application::LancerApplication ()
     }
     delete formeAAjouter;
     delete selectionAAjouter;
+    delete nouvelleCommande;
 } //----- Fin de LancerApplication
 
 
@@ -167,30 +167,23 @@ Application::~Application ( )
 //----------------------------------------------------- Méthodes privees
 
 bool Application::undo() {
-    bool res = false;
-    if(etatCourant != listeEtats.begin())
-    {
+    cout<<(*etatCourant)<<endl;
+    bool res =(*etatCourant)->DefaireCommande();
+    if(res && etatCourant != listeEtats.begin())
         etatCourant--;
-        res = true;
-    }
+    cout<<(*etatCourant)<<endl;
     return res;
 }  //----- Fin de undo
 
 bool Application::redo() {
-    bool res = false;
-    if(etatCourant != listeEtats.end())
-    {
+    if(etatCourant != (--listeEtats.end()))
         etatCourant++;
-        res = true;
-    }
-    return res;
-}  //----- Fin de undo
+    return (*etatCourant)->FaireCommande();
+}  //----- Fin de redo
 
-void Application::eraseAllFrom(list<EnsembleFormes*>::iterator debut)
+void Application::eraseAllFrom(list<Commande*>::iterator debut)
 {
     debut++;
     while (debut != listeEtats.end())
-    {
         listeEtats.erase(debut++);
-    }
 }
