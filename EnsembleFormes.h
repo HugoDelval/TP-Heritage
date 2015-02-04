@@ -11,7 +11,9 @@ copyright            : (C) 2015 par B3424
 
 //--------------------------------------------------- Interfaces utilisées
 #include <string.h>
+#include <unordered_map>
 #include <map>
+#include <vector>
 #include "FormeGeometrique.h"
 #include "Selection.h"
 //------------------------------------------------------------- Constantes 
@@ -29,19 +31,20 @@ class EnsembleFormes
 
 public:
 //----------------------------------------------------- Méthodes publiques
+
     void Sauvegarder (string nomFichier);
     // Mode d'emploi :
     //  sauvegarde la map stockant toutes les FormesGeometriques dans un fichier texte du nom 'nomFichier'
     // Contrat :
     //  aucun
 
-    void Charger (string nomFichier);
+    bool Charger (string nomFichier, EnsembleFormes* ancien);
     // Mode d'emploi :
     //  charge la map stockant toutes les FormesGeometriques depuis un fichier texte du nom 'nomFichier'
     // Contrat :
     //  aucun
 
-    bool Supprimer (string nomForme, bool estUneFormeGeo=true);
+    vector<FormeGeometrique*> Supprimer (string nomForme);
     // Mode d'emploi :
     //  supprime la Forme du nom 'nomForme' en gerant le cas ou cette Forme est une Selection
     // Contrat :
@@ -59,7 +62,7 @@ public:
     // Contrat :
     //  aucun
 
-    void Deplacer (string nomForme, long dx, long dy);
+    bool Deplacer (string nomForme, long dx, long dy);
     // Mode d'emploi :
     //  deplace la Forme de nom 'nomForme' de dx en abscisse et dy en ordonne, en gerant le cas ou cette Forme est une Selection
     // Contrat :
@@ -96,14 +99,16 @@ public:
 // Contrat :
 // aucun
 
-//------------------------------------------------------------------ PRIVE 
+friend class CommandeLoad;
+friend class CommandeDelete;
+//------------------------------------------------------------------ PRIVE
 
 private:
 //----------------------------------------------------- Méthodes privees
 
 //----------------------------------------------------- Attributs prives
     typedef map<string, FormeGeometrique*> DicoFormeGeometrique;
-    typedef map<string, Selection*> DicoSelection;
+    typedef unordered_map<string, Selection*> DicoSelection;
     DicoFormeGeometrique mesFormes;
     DicoSelection mesSelections;
 };

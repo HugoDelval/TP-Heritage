@@ -72,6 +72,12 @@ private:
     // Contrat :
     //  aucun
 
+    vector<string> string_split(const string &s, const char delimiter);
+    // Mode d'emploi :
+    //  split a string
+    // Contrat :
+    //  aucun
+
 //----------------------------------------------------- Attributs prives
     EnsembleFormes* maStructure;
     list<Commande*>::iterator etatCourant;

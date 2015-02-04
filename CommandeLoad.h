@@ -1,28 +1,27 @@
 /*************************************************************************
-CommandeDelete  -  description
+CommandeLoad  -  description
 -------------------
 début                : 16/01/2015
 copyright            : (C) 2015 par B3424
 *************************************************************************/
 
-//---------- Interface de la classe <CommandeDelete> (fichier CommandeDelete.h) ------
-#if ! defined ( COMMANDE_DELETE_H )
-#define COMMANDE_DELETE_H
+//---------- Interface de la classe <CommandeLoad> (fichier CommandeLoad.h) ------
+#if ! defined ( COMMANDE_LOAD_H )
+#define COMMANDE_LOAD_H
 
 //--------------------------------------------------- Interfaces utilisées
 #include "Commande.h"
 #include "FormeGeometrique.h"
-#include <list>
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
 
 //------------------------------------------------------------------------
-// Rôle de la classe <CommandeDelete>
+// Rôle de la classe <CommandeLoad>
 //  Permet de gerer les undo et redo.
 //------------------------------------------------------------------------
 
-class CommandeDelete : public Commande
+class CommandeLoad : public Commande
 {
 //----------------------------------------------------------------- PUBLIC
 
@@ -41,19 +40,14 @@ public:
     // aucun
 
 //-------------------------------------------- Constructeurs - destructeur
-    CommandeDelete(EnsembleFormes* maStructure);
+
+    CommandeLoad (EnsembleFormes* maStructure,string fileName="");
 // Mode d'emploi :
-//  cree un objet CommandeDelete et initialise ses attributs
+//  cree un objet CommandeLoad et initialise ses attributs
 // Contrat :
 //
 
-    CommandeDelete(EnsembleFormes* maStructure,list<string> &lesFormes);
-// Mode d'emploi :
-//  cree un objet CommandeDelete et initialise ses attributs
-// Contrat :
-//
-
-    virtual ~CommandeDelete ();
+    virtual ~CommandeLoad ();
 // Mode d'emploi :
 // supprime tous les attributs de l'objet de la memoire
 // Contrat :
@@ -63,9 +57,11 @@ public:
 
 private:
 //----------------------------------------------------- Méthodes privees
-    list<string> lesFormesASupprimer;
-    list<FormeGeometrique*> lesFormesSauv;
+    string nomFichier;
+    EnsembleFormes::DicoFormeGeometrique structureSauv;
+    EnsembleFormes* nouvelleStruct;
     bool charge;
+
 protected:
 //----------------------------------------------------- Attributs proteges
 
@@ -73,7 +69,7 @@ protected:
 
 };
 
-//--------------------------- Autres définitions dépendantes de <CommandeDelete>
+//--------------------------- Autres définitions dépendantes de <CommandeLoad>
 
-#endif // COMMANDE_DELETE_H
+#endif // COMMANDE_LOAD_H
 

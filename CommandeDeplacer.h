@@ -1,28 +1,27 @@
 /*************************************************************************
-CommandeDelete  -  description
+CommandeDeplacer  -  description
 -------------------
 début                : 16/01/2015
 copyright            : (C) 2015 par B3424
 *************************************************************************/
 
-//---------- Interface de la classe <CommandeDelete> (fichier CommandeDelete.h) ------
-#if ! defined ( COMMANDE_DELETE_H )
-#define COMMANDE_DELETE_H
+//---------- Interface de la classe <CommandeDeplacer> (fichier CommandeDeplacer.h) ------
+#if ! defined ( COMMANDE_DEPLACER_H )
+#define COMMANDE_DEPLACER_H
 
 //--------------------------------------------------- Interfaces utilisées
 #include "Commande.h"
 #include "FormeGeometrique.h"
-#include <list>
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
 
 //------------------------------------------------------------------------
-// Rôle de la classe <CommandeDelete>
+// Rôle de la classe <CommandeDeplacer>
 //  Permet de gerer les undo et redo.
 //------------------------------------------------------------------------
 
-class CommandeDelete : public Commande
+class CommandeDeplacer : public Commande
 {
 //----------------------------------------------------------------- PUBLIC
 
@@ -41,19 +40,14 @@ public:
     // aucun
 
 //-------------------------------------------- Constructeurs - destructeur
-    CommandeDelete(EnsembleFormes* maStructure);
+
+    CommandeDeplacer (EnsembleFormes* maStructure,string laFormeADeplacer, long dx, long dy);
 // Mode d'emploi :
-//  cree un objet CommandeDelete et initialise ses attributs
+//  cree un objet CommandeDeplacer et initialise ses attributs
 // Contrat :
 //
 
-    CommandeDelete(EnsembleFormes* maStructure,list<string> &lesFormes);
-// Mode d'emploi :
-//  cree un objet CommandeDelete et initialise ses attributs
-// Contrat :
-//
-
-    virtual ~CommandeDelete ();
+    virtual ~CommandeDeplacer ();
 // Mode d'emploi :
 // supprime tous les attributs de l'objet de la memoire
 // Contrat :
@@ -63,9 +57,10 @@ public:
 
 private:
 //----------------------------------------------------- Méthodes privees
-    list<string> lesFormesASupprimer;
-    list<FormeGeometrique*> lesFormesSauv;
-    bool charge;
+    string laForme;
+    long dx;
+    long dy;
+
 protected:
 //----------------------------------------------------- Attributs proteges
 
@@ -73,7 +68,7 @@ protected:
 
 };
 
-//--------------------------- Autres définitions dépendantes de <CommandeDelete>
+//--------------------------- Autres définitions dépendantes de <CommandeDeplacer>
 
-#endif // COMMANDE_DELETE_H
+#endif // COMMANDE_DEPLACER_H
 

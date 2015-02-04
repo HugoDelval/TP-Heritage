@@ -139,7 +139,8 @@ istream& Rectangle::fluxRentrant(istream &is)
 
 ostream& Rectangle::fluxSortant(ostream &os)
 {
-    os << nomForme+" "
+    os << "R "
+       << nomForme   << " "
        << initial1.x << " "
        << initial1.y << " "
        << initial2.x << " "

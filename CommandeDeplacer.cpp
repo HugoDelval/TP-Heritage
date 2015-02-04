@@ -1,11 +1,11 @@
 /*************************************************************************
-CommandeAjoutFormeGeo  -  description
+CommandeDeplacer  -  description
 -------------------
 début                : 16/01/2015
 copyright            : (C) 2015 par B3424
 *************************************************************************/
 
-//---------- Réalisation de la classe <CommandeAjoutFormeGeo> (fichier CommandeAjoutFormeGeo.cpp) -------
+//---------- Réalisation de la classe <CommandeDeplacer> (fichier CommandeDeplacer.cpp) -------
 
 //---------------------------------------------------------------- INCLUDE
 
@@ -14,7 +14,7 @@ using namespace std;
 #include <iostream>
 
 //------------------------------------------------------ Include personnel
-#include "CommandeAjoutFormeGeo.h"
+#include "CommandeDeplacer.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -22,12 +22,12 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Méthodes publiques
-bool CommandeAjoutFormeGeo::FaireCommande()
+bool CommandeDeplacer::FaireCommande()
 {
-    bool res = true;
+    bool res = false;
     if(!done)
     {
-        res=leDessin->AjouterFormeGeo(laForme);
+        res=leDessin->Deplacer(laForme, dx, dy);
         if(res)
         {
             done=true;
@@ -37,12 +37,12 @@ bool CommandeAjoutFormeGeo::FaireCommande()
     return res;
 }
 
-bool CommandeAjoutFormeGeo::DefaireCommande()
+bool CommandeDeplacer::DefaireCommande()
 {
-    bool res=true;
+    bool res=false;
     if(!unDone)
     {
-        res=!(leDessin->Supprimer(laForme->GetNom()).empty());
+        res=leDessin->Deplacer(laForme, -dx, -dy);
         if(res)
         {
             done=false;
@@ -54,25 +54,27 @@ bool CommandeAjoutFormeGeo::DefaireCommande()
 
 //-------------------------------------------- Constructeurs - destructeur
 
-CommandeAjoutFormeGeo::CommandeAjoutFormeGeo (EnsembleFormes* maStructure,FormeGeometrique* laFormeAAjouter)
+CommandeDeplacer::CommandeDeplacer (EnsembleFormes* maStructure,string laFormeADeplacer, long dx, long dy)
 {
     leDessin=maStructure;
-    laForme=laFormeAAjouter;
+    laForme=laFormeADeplacer;
     done=false;
     unDone=false;
+    this->dx=dx;
+    this->dy=dy;
 #ifdef MAP
-    cout << "Appel au constructeur de <CommandeAjoutFormeGeo>" << endl;
+    cout << "Appel au constructeur de <CommandeDeplacer>" << endl;
 #endif
-} //----- Fin du constructeur CommandeAjoutFormeGeo
+} //----- Fin du constructeur CommandeDeplacer
 
 
-CommandeAjoutFormeGeo::~CommandeAjoutFormeGeo ( )
+CommandeDeplacer::~CommandeDeplacer ( )
 {
 
 #ifdef MAP
-    cout << "Appel au destructeur de <CommandeAjoutFormeGeo>" << endl;
+    cout << "Appel au destructeur de <CommandeDeplacer>" << endl;
 #endif
-} //----- Fin de ~CommandeAjoutFormeGeo
+} //----- Fin de ~CommandeDeplacer
 
 
 //------------------------------------------------------------------ PRIVE

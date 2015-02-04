@@ -17,7 +17,10 @@ using namespace std;
 //------------------------------------------------------ Include personnel
 #include "Application.h"
 #include "CommandeAjoutFormeGeo.h"
-#include <sstream>
+#include "CommandeDelete.h"
+#include "CommandeDeplacer.h"
+#include "CommandeLoad.h"
+#include "Cercle.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -28,35 +31,18 @@ using namespace std;
 void Application::LancerApplication ()
 {
     string commande="";
-    string type="";
     bool sortir = false;
     etatCourant=listeEtats.begin();
     maStructure=new EnsembleFormes();
-    FormeGeometrique* formeAAjouter;
-    Selection* selectionAAjouter;
-    Commande* nouvelleCommande;
+    FormeGeometrique* formeAAjouter= nullptr;
+    Selection* selectionAAjouter= nullptr;
+    Commande* nouvelleCommande= nullptr;
     while(!sortir)
     {
         getline(cin,commande);
-        istringstream iss(commande);
-        iss >> type;
-        if(type.compare("C")==0){
-            //ajout cercle
-            string name,x1,y1,rayon;
-            iss >> name;
-            iss >> x1;
-            iss >> y1;
-            iss >> rayon;
-            cout<< "commande C with : "+name+" "+x1+" "+y1+" "+rayon<<endl;
-        }else if(type.compare("R")==0){
-            // ajout rectangle
-            string name,x1,x2,y1,y2;
-            iss >> name;
-            iss >> x1;
-            iss >> y1;
-            iss >> x2;
-            iss >> y2;
-            formeAAjouter=new Rectangle(name,atoi(x1.c_str()),atoi(y1.c_str()),atoi(x2.c_str()),atoi(y2.c_str()));
+        vector<string> args= string_split(commande, ' ');
+        if(args[0].compare("C")==0){
+            formeAAjouter=new Cercle(args[1],atoi(args[2].c_str()),atoi(args[3].c_str()),atoi(args[4].c_str()));
             nouvelleCommande=new CommandeAjoutFormeGeo(maStructure,formeAAjouter);
             if(nouvelleCommande->FaireCommande())
             {
@@ -67,73 +53,106 @@ void Application::LancerApplication ()
             }else{
                 cout<<"ERR"<<endl;
             }
-        }else if(type.compare("L")==0){
-            // ajout ligne
-            cout<< "commande L"<<endl;
-        }else if(type.compare("PL")==0){
-            // ajout polyligne
-            cout<< "commande PL"<<endl;
-        }else if(type.compare("S")==0){
-            string name,x1,x2,y1,y2;
-            iss >> name;
-            iss >> x1;
-            iss >> y1;
-            iss >> x2;
-            iss >> y2;
-            Rectangle r(name+"RectangleAssociee",atoi(x1.c_str()),atoi(y1.c_str()),atoi(x2.c_str()),atoi(y2.c_str()));
-            selectionAAjouter=new Selection(name,&r);
-            if(maStructure->AjouterSelection(selectionAAjouter))
-            {
-                cout<<"OK"<<endl;
-            }else{
-                cout<<"ERR"<<endl;
-            }
-        }else if(type.compare("DELETE")==0){
-            // suppession
-
-
-
-        }else if(type.compare("MOVE")==0){
-            string name,dx,dy;
-            iss >> name;
-            iss >> dx;
-            iss >> dy;
-        //    nouvelleCommande=new CommandeDeplacer(maStructure,name,atoi(dx.c_str()),atoi(dy.c_str()));;
+        }else if(args[0].compare("R")==0){
+            // ajout rectangle
+            formeAAjouter=new Rectangle(args[1],atoi(args[2].c_str()),atoi(args[3].c_str()),atoi(args[4].c_str()),atoi(args[5].c_str()));
+            nouvelleCommande=new CommandeAjoutFormeGeo(maStructure,formeAAjouter);
             if(nouvelleCommande->FaireCommande())
             {
                 eraseAllFrom(etatCourant);
                 listeEtats.push_back(nouvelleCommande);
                 etatCourant++;
                 cout<<"OK"<<endl;
+            }else{
+                cout<<"ERR"<<endl;
             }
-        }else if(type.compare("LIST")==0){
-            // enumerer
+        }else if(args[0].compare("L")==0){
+            // ajout ligne
+            cout<< "commande L"<<endl;
+        }else if(args[0].compare("PL")==0){
+            // ajout polyligne
+            cout<< "commande PL"<<endl;
+        }else if(args[0].compare("S")==0){
+            Rectangle r(args[1]+"RectangleAssociee",atoi(args[2].c_str()),atoi(args[3].c_str()),atoi(args[4].c_str()),atoi(args[5].c_str()));
+            selectionAAjouter=new Selection(args[1],&r);
+            if(maStructure->AjouterSelection(selectionAAjouter))
+            {
+                cout<<"OK"<<endl;
+            }else{
+                cout<<"ERR"<<endl;
+            }
+        }else if(args[0].compare("DELETE")==0){
+            // suppession
+            list<string> formesASupp;
+            for(int i=1 ; i<args.size() ; i++)
+                formesASupp.push_back(args[i]);
+            nouvelleCommande=new CommandeDelete(maStructure,formesASupp);
+            if(nouvelleCommande->FaireCommande())
+            {
+                eraseAllFrom(etatCourant);
+                listeEtats.push_back(nouvelleCommande);
+                etatCourant++;
+                cout<<"OK"<<endl;
+            }else{
+                cout<<"ERR"<<endl;
+            }
+        }else if(args[0].compare("MOVE")==0){
+            nouvelleCommande=new CommandeDeplacer(maStructure,args[1],atoi(args[2].c_str()),atoi(args[3].c_str()));;
+            if(nouvelleCommande->FaireCommande())
+            {
+                eraseAllFrom(etatCourant);
+                listeEtats.push_back(nouvelleCommande);
+                etatCourant++;
+                cout<<"OK"<<endl;
+            } else {
+                cout << "ERR" << endl;
+            }
+        }else if(args[0].compare("LIST")==0){
             maStructure->Lister();
-        }else if(type.compare("UNDO")==0){
+        }else if(args[0].compare("UNDO")==0){
             if(undo())
             {
                 cout<<"OK"<<endl;
             }else{
                 cout<<"ERR"<<endl;
             }
-        }else if(type.compare("REDO")==0){
+        }else if(args[0].compare("REDO")==0){
             if(redo())
             {
                 cout<<"OK"<<endl;
             }else{
                 cout<<"ERR"<<endl;
             }
-        }else if(type.compare("LOAD")==0){
-            // charger fichier
-            cout<< "commande LOAD"<<endl;
-        }else if(type.compare("SAVE")==0){
-            // enregistrer dans un fichier
-            cout<< "commande SAVE"<<endl;
-        }else if(type.compare("CLEAR")==0){
-            // tout vider
-            cout<< "commande CLEAR"<<endl;
-        }else if(type.compare("EXIT")==0){
-            // arreter
+        }else if(args[0].compare("LOAD")==0){
+            if(!args[1].empty())
+            {
+                nouvelleCommande = new CommandeLoad(maStructure,args[1]);
+                if(nouvelleCommande->FaireCommande())
+                {
+                    eraseAllFrom(etatCourant);
+                    listeEtats.push_back(nouvelleCommande);
+                    etatCourant++;
+                    cout<<"OK"<<endl;
+                } else {
+                    cout << "ERR" << endl;
+                }
+            }else{
+                cout << "ERR" << endl;
+            }
+        }else if(args[0].compare("SAVE")==0){
+            maStructure->Sauvegarder(args[1]);
+        }else if(args[0].compare("CLEAR")==0){
+            nouvelleCommande = new CommandeDelete(maStructure);
+            if(nouvelleCommande->FaireCommande())
+            {
+                eraseAllFrom(etatCourant);
+                listeEtats.push_back(nouvelleCommande);
+                etatCourant++;
+                cout<<"OK"<<endl;
+            } else {
+                cout << "ERR" << endl;
+            }
+        }else if(args[0].compare("EXIT")==0){
             sortir=true;
         }
     }
@@ -166,19 +185,38 @@ Application::~Application ( )
 
 //----------------------------------------------------- Méthodes privees
 
-bool Application::undo() {
-    cout<<(*etatCourant)<<endl;
-    bool res =(*etatCourant)->DefaireCommande();
-    if(res && etatCourant != listeEtats.begin())
-        etatCourant--;
-    cout<<(*etatCourant)<<endl;
+bool Application::undo()
+{
+    bool res=false;
+    if(listeEtats.empty())
+    {
+        res=true;
+    }
+    else
+    {
+        res =(*etatCourant)->DefaireCommande();
+        if(res && etatCourant != listeEtats.begin())
+        {
+            etatCourant--;
+        }
+    }
     return res;
 }  //----- Fin de undo
 
-bool Application::redo() {
-    if(etatCourant != (--listeEtats.end()))
-        etatCourant++;
-    return (*etatCourant)->FaireCommande();
+bool Application::redo()
+{
+    bool res=false;
+    if(listeEtats.empty())
+    {
+        res=true;
+    }
+    else {
+        res = (*etatCourant)->FaireCommande();
+        if (etatCourant != (--listeEtats.end())) {
+            etatCourant++;
+        }
+    }
+    return res;
 }  //----- Fin de redo
 
 void Application::eraseAllFrom(list<Commande*>::iterator debut)
@@ -187,3 +225,23 @@ void Application::eraseAllFrom(list<Commande*>::iterator debut)
     while (debut != listeEtats.end())
         listeEtats.erase(debut++);
 }
+
+
+vector<string> Application::string_split(const string &s, const char delimiter) {
+    size_t start = 0;
+    size_t end = s.find_first_of(delimiter);
+
+    vector<string> output;
+
+    while (end <= string::npos) {
+        output.emplace_back(s.substr(start, end - start));
+
+        if (end == string::npos)
+            break;
+
+        start = end + 1;
+        end = s.find_first_of(delimiter, start);
+    }
+    return output;
+}
+

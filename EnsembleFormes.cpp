@@ -28,12 +28,12 @@ using namespace std;
 
 EnsembleFormes::EnsembleFormes (const EnsembleFormes & unEnsembleFormes )
 {
-    DicoFormeGeometrique::const_iterator i1 = unEnsembleFormes.mesFormes.begin();
+    DicoFormeGeometrique::const_iterator i1 = unEnsembleFormes.mesFormes.cbegin();
     for(i1 ; i1!=unEnsembleFormes.mesFormes.end() ; ++i1 )
     {
         mesFormes.insert(make_pair(i1->first,i1->second->Copy()));
     }
-    DicoSelection::const_iterator i2 = unEnsembleFormes.mesSelections.begin();
+    DicoSelection::const_iterator i2 = unEnsembleFormes.mesSelections.cbegin();
     for(i2 ; i2!=unEnsembleFormes.mesSelections.end() ; ++i2 )
     {
         mesSelections.insert(make_pair(i2->first,new Selection(*(i2->second))));
@@ -82,59 +82,64 @@ void EnsembleFormes::Sauvegarder(string nomFichier)
     }
 }
 
-void EnsembleFormes::Charger(string nomFichier)
+bool EnsembleFormes::Charger(string nomFichier, EnsembleFormes* ancien)
 {
-    ifstream file(nomFichier.c_str());
-
-    if(file.good())
+    bool res=true;
+    if(!nomFichier.empty())
     {
-        FormeGeometrique* fg;
-        string type="";
-        while(getline(file, type, ' '))
+        ifstream file(nomFichier.c_str());
+        if(file.good())
         {
-            if( type.compare("R")==0 ) {
-                fg = new Rectangle(file);
-                mesFormes.insert(pair<string,FormeGeometrique*>(fg->GetNom(),fg));
-                cout << "OK" << endl;
-            }else{
-                cout<<"ERR"<<endl;
+            FormeGeometrique* fg;
+            string type="";
+            while(getline(file, type, ' ') && res)
+            {
+                if( type.compare("R")==0 ) {
+                    fg = new Rectangle(file);
+                    mesFormes.insert(pair<string,FormeGeometrique*>(fg->GetNom(),fg));
+                }else if(type.compare("C")==0){
+                    //cercle
+                }else if(type.compare("L")==0){
+                    //LIGNE
+                }else if(type.compare("PL")==0){
+                    //polyligne
+                }
+                if(ancien->mesFormes.find(fg->GetNom())!=ancien->mesFormes.end())
+                {
+                    res=false;
+                }
             }
         }
+        else
+        {
+            res=false;
+        }
     }
-    else
-    {
-        cout << "ERR" <<endl;
-    }
-
-
+    return res;
 }
 
-bool EnsembleFormes::Supprimer(string nomForme, bool estUneFormeGeo)
+vector<FormeGeometrique*> EnsembleFormes::Supprimer(string nomForme)
 {
-    bool res=false;
-    if(estUneFormeGeo){
-        DicoFormeGeometrique::iterator i = (mesFormes.find(nomForme));
-        if(i!=mesFormes.end())
-        {
-            res=true;
-            FormeGeometrique* fg = (i->second);
-            fg->Disparaitre();
-            mesFormes.erase(i);
-        }
+    vector<FormeGeometrique*> res;
+    DicoFormeGeometrique::iterator i = (mesFormes.find(nomForme));
+    if(i!=mesFormes.end()){
+        FormeGeometrique* fg = (i->second);
+        res.push_back(fg);
+        fg->Disparaitre();
+        mesFormes.erase(i);
     }else{
-        DicoSelection::iterator i = mesSelections.find(nomForme);
-        if(i!=mesSelections.end())
+        DicoSelection::iterator i2 = mesSelections.find(nomForme);
+        if(i2!=mesSelections.end())
         {
-            res=true;
-            Selection* s = i->second;
+            Selection* s = i2->second;
             list<FormeGeometrique*> lesFormesASupprimer = s->GetFormesSelectionnees();
             for(list<FormeGeometrique*>::const_iterator ci=lesFormesASupprimer.begin() ; ci!=lesFormesASupprimer.end() ; ++ci){
                 FormeGeometrique* fg = (*ci);
+                res.push_back(fg);
                 fg->Disparaitre();
                 mesFormes.erase(fg->GetNom());
-                delete fg;
             }
-            mesSelections.erase(i);
+            mesSelections.erase(i2);
         }
     }
     return res;
@@ -169,14 +174,23 @@ bool EnsembleFormes::AjouterSelection (Selection* maSelection)
     return res;
 }
 
-void EnsembleFormes::Deplacer(string nomForme, long dx, long dy)
+bool EnsembleFormes::Deplacer(string nomForme, long dx, long dy)
 {
-    if(mesFormes.find(nomForme) != mesFormes.end()){
-        mesFormes.find(nomForme)->second->Deplacer(dx, dy);
+    bool res=true;
+    DicoFormeGeometrique::iterator i= mesFormes.find(nomForme);
+    if(i != mesFormes.end())
+    {
+        i->second->Deplacer(dx, dy);
     }else{
-        Selection* s = mesSelections.find(nomForme)->second;
-        s->Deplacer(dx, dy);
+        DicoSelection::iterator i2= mesSelections.find(nomForme);
+        if(i2 != mesSelections.end())
+        {
+            i2->second->Deplacer(dx, dy);
+        }else {
+            res=false;
+        }
     }
+    return res;
 }
 
 void EnsembleFormes::Lister()

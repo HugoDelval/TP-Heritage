@@ -24,41 +24,60 @@ using namespace std;
 //----------------------------------------------------- Méthodes publiques
 bool CommandeDelete::FaireCommande()
 {
-    bool res = false;
     if(!done)
     {
-        res=true;
-        for(int i=0;i<lesFormesASupprimer.size() && res;i++)
+        for(list<string>::iterator i=lesFormesASupprimer.begin();i!=lesFormesASupprimer.end();i++)
         {
-            res=leDessin->Supprimer(lesFormesASupprimer[i]);
+            vector<FormeGeometrique*> v=leDessin->Supprimer(*i);
+            if(!charge)
+                lesFormesSauv.insert (lesFormesSauv.begin(),v.begin(),v.end());
         }
         done=true;
         unDone=false;
+        charge=true;
     }
-    return res;
+    return !lesFormesASupprimer.empty();
 }
 
 bool CommandeDelete::DefaireCommande()
 {
-    bool res=false;
+    bool res=true;
     if(!unDone)
     {
-        res=leDessin->Supprimer(laForme->GetNom());
+        for(list<FormeGeometrique*>::iterator i=lesFormesSauv.begin();i!=lesFormesSauv.end() && res;i++)
+        {
+            res=leDessin->AjouterFormeGeo(*i);
+        }
         done=false;
         unDone=true;
     }
-    cout<<done<<endl;
     return res;
 }
 
 //-------------------------------------------- Constructeurs - destructeur
 
-CommandeDelete::CommandeDelete (EnsembleFormes* maStructure,stack<string> &lesFormes)
+CommandeDelete::CommandeDelete (EnsembleFormes* maStructure) // pour le clear
+{
+    leDessin=maStructure;
+    for(EnsembleFormes::DicoFormeGeometrique::iterator i=maStructure->mesFormes.begin() ; i!=maStructure->mesFormes.end() ; i++)
+    {
+        lesFormesASupprimer.push_back(i->first);
+    }
+    done=false;
+    unDone=false;
+    charge=false;
+#ifdef MAP
+    cout << "Appel au constructeur de <CommandeDelete>" << endl;
+#endif
+} //----- Fin du constructeur CommandeDelete
+
+CommandeDelete::CommandeDelete (EnsembleFormes* maStructure,list<string> &lesFormes)
 {
     leDessin=maStructure;
     lesFormesASupprimer=lesFormes;
     done=false;
     unDone=false;
+    charge=false;
 #ifdef MAP
     cout << "Appel au constructeur de <CommandeDelete>" << endl;
 #endif
