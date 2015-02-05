@@ -92,19 +92,26 @@ bool EnsembleFormes::Charger(string nomFichier, EnsembleFormes* ancien)
         {
             FormeGeometrique* fg;
             string type="";
+            string pb="";
+            bool valide=false;
             while(getline(file, type, ' ') && res)
             {
+                valide=false;
                 if( type.compare("R")==0 ) {
                     fg = new Rectangle(file);
                     mesFormes.insert(pair<string,FormeGeometrique*>(fg->GetNom(),fg));
+                    valide=true;
                 }else if(type.compare("C")==0){
+                    getline(file, type);
                     //cercle
                 }else if(type.compare("L")==0){
+                    getline(file, type);
                     //LIGNE
                 }else if(type.compare("PL")==0){
+                    getline(file, type);
                     //polyligne
                 }
-                if(ancien->mesFormes.find(fg->GetNom())!=ancien->mesFormes.end())
+                if(valide && ancien->mesFormes.find(fg->GetNom())!=ancien->mesFormes.end())
                 {
                     res=false;
                 }
@@ -118,9 +125,10 @@ bool EnsembleFormes::Charger(string nomFichier, EnsembleFormes* ancien)
     return res;
 }
 
-vector<FormeGeometrique*> EnsembleFormes::Supprimer(string nomForme)
+pair<vector<FormeGeometrique*>,bool> EnsembleFormes::Supprimer(string nomForme)
 {
     vector<FormeGeometrique*> res;
+    bool estUneSelectionVide=false;
     DicoFormeGeometrique::iterator i = (mesFormes.find(nomForme));
     if(i!=mesFormes.end()){
         FormeGeometrique* fg = (i->second);
@@ -133,16 +141,21 @@ vector<FormeGeometrique*> EnsembleFormes::Supprimer(string nomForme)
         {
             Selection* s = i2->second;
             list<FormeGeometrique*> lesFormesASupprimer = s->GetFormesSelectionnees();
-            for(list<FormeGeometrique*>::const_iterator ci=lesFormesASupprimer.begin() ; ci!=lesFormesASupprimer.end() ; ++ci){
-                FormeGeometrique* fg = (*ci);
-                res.push_back(fg);
-                fg->Disparaitre();
-                mesFormes.erase(fg->GetNom());
+            if(!lesFormesASupprimer.empty())
+            {
+                for(list<FormeGeometrique*>::const_iterator ci=lesFormesASupprimer.begin() ; ci!=lesFormesASupprimer.end() ; ++ci){
+                    FormeGeometrique* fg = (*ci);
+                    res.push_back(fg);
+                    fg->Disparaitre();
+                    mesFormes.erase(fg->GetNom());
+                }
+                mesSelections.erase(i2);
+            }else{
+                estUneSelectionVide=true;
             }
-            mesSelections.erase(i2);
         }
     }
-    return res;
+    return make_pair(res, estUneSelectionVide);
 }
 
 bool EnsembleFormes::AjouterFormeGeo (FormeGeometrique* maForme)

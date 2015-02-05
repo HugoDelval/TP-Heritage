@@ -44,7 +44,7 @@ public:
     // Contrat :
     //  aucun
 
-    vector<FormeGeometrique*> Supprimer (string nomForme);
+    pair<vector<FormeGeometrique*>,bool> Supprimer (string nomForme);
     // Mode d'emploi :
     //  supprime la Forme du nom 'nomForme' en gerant le cas ou cette Forme est une Selection
     // Contrat :

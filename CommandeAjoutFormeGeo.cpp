@@ -42,7 +42,7 @@ bool CommandeAjoutFormeGeo::DefaireCommande()
     bool res=true;
     if(!unDone)
     {
-        res=!(leDessin->Supprimer(laForme->GetNom()).empty());
+        res=!(leDessin->Supprimer(laForme->GetNom()).first.empty());
         if(res)
         {
             done=false;

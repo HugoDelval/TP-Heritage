@@ -24,19 +24,24 @@ using namespace std;
 //----------------------------------------------------- Méthodes publiques
 bool CommandeDelete::FaireCommande()
 {
+    bool res=true;
     if(!done)
     {
         for(list<string>::iterator i=lesFormesASupprimer.begin();i!=lesFormesASupprimer.end();i++)
         {
-            vector<FormeGeometrique*> v=leDessin->Supprimer(*i);
+            pair<vector<FormeGeometrique*>,bool> v=leDessin->Supprimer(*i);
+            if(res)
+            {
+                res=v.second || !(v.first.empty()); // vrai si il y a des formes supprimees ou si c'est une selection vide
+            }
             if(!charge)
-                lesFormesSauv.insert (lesFormesSauv.begin(),v.begin(),v.end());
+                lesFormesSauv.insert (lesFormesSauv.begin(),v.first.begin(),v.first.end());
         }
         done=true;
         unDone=false;
         charge=true;
     }
-    return !lesFormesASupprimer.empty();
+    return res;
 }
 
 bool CommandeDelete::DefaireCommande()
