@@ -16,6 +16,9 @@ using namespace std;
 
 //------------------------------------------------------ Include personnel
 #include "EnsembleFormes.h"
+#include "Cercle.h"
+#include "Ligne.h"
+#include "Polyligne.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -92,7 +95,6 @@ bool EnsembleFormes::Charger(string nomFichier, EnsembleFormes* ancien)
         {
             FormeGeometrique* fg;
             string type="";
-            string pb="";
             bool valide=false;
             while(getline(file, type, ' ') && res)
             {
@@ -102,14 +104,17 @@ bool EnsembleFormes::Charger(string nomFichier, EnsembleFormes* ancien)
                     mesFormes.insert(pair<string,FormeGeometrique*>(fg->GetNom(),fg));
                     valide=true;
                 }else if(type.compare("C")==0){
-                    getline(file, type);
-                    //cercle
+                    valide=true;
+                    fg = new Cercle(file);
+                    mesFormes.insert(pair<string,FormeGeometrique*>(fg->GetNom(),fg));
                 }else if(type.compare("L")==0){
-                    getline(file, type);
-                    //LIGNE
+                    valide=true;
+                    fg = new Ligne(file);
+                    mesFormes.insert(pair<string,FormeGeometrique*>(fg->GetNom(),fg));
                 }else if(type.compare("PL")==0){
-                    getline(file, type);
-                    //polyligne
+                    valide=true;
+                    fg = new Polyligne(file);
+                    mesFormes.insert(pair<string,FormeGeometrique*>(fg->GetNom(),fg));
                 }
                 if(valide && ancien->mesFormes.find(fg->GetNom())!=ancien->mesFormes.end())
                 {

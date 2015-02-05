@@ -82,6 +82,7 @@ private:
     EnsembleFormes* maStructure;
     list<Commande*>::iterator etatCourant;
     list<Commande*> listeEtats;
+    bool fait;
 
 };
 

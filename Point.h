@@ -76,6 +76,8 @@ private:
 //---------------------------------------------------------- Classes amies
 friend class Rectangle;
 friend class Cercle;
+friend class Ligne;
+friend class Polyligne;
 //-------------------------------------------------------- Classes privees
 
 //----------------------------------------------------------- Types prives

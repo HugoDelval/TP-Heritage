@@ -21,6 +21,8 @@ using namespace std;
 #include "CommandeDeplacer.h"
 #include "CommandeLoad.h"
 #include "Cercle.h"
+#include "Ligne.h"
+#include "Polyligne.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -33,6 +35,7 @@ void Application::LancerApplication ()
     string commande="";
     bool sortir = false;
     etatCourant=listeEtats.begin();
+    fait=false;
     maStructure=new EnsembleFormes();
     FormeGeometrique* formeAAjouter= nullptr;
     Selection* selectionAAjouter= nullptr;
@@ -49,6 +52,7 @@ void Application::LancerApplication ()
                 eraseAllFrom(etatCourant);
                 listeEtats.push_back(nouvelleCommande);
                 etatCourant++;
+                fait=true;
                 cout<<"OK"<<endl;
             }else{
                 cout<<"ERR"<<endl;
@@ -62,16 +66,41 @@ void Application::LancerApplication ()
                 eraseAllFrom(etatCourant);
                 listeEtats.push_back(nouvelleCommande);
                 etatCourant++;
+                fait=true;
                 cout<<"OK"<<endl;
             }else{
                 cout<<"ERR"<<endl;
             }
         }else if(args[0].compare("L")==0){
-            // ajout ligne
-            cout<< "commande L"<<endl;
+            formeAAjouter=new Ligne(args[1],atoi(args[2].c_str()),atoi(args[3].c_str()),atoi(args[4].c_str()),atoi(args[5].c_str()));
+            nouvelleCommande=new CommandeAjoutFormeGeo(maStructure,formeAAjouter);
+            if(nouvelleCommande->FaireCommande())
+            {
+                eraseAllFrom(etatCourant);
+                listeEtats.push_back(nouvelleCommande);
+                etatCourant++;
+                fait=true;
+                cout<<"OK"<<endl;
+            }else{
+                cout<<"ERR"<<endl;
+            }
         }else if(args[0].compare("PL")==0){
-            // ajout polyligne
-            cout<< "commande PL"<<endl;
+            vector<long> coordonnees;
+            for(int i=2 ; i< args.size() ; i++){
+                coordonnees.push_back(atoi(args[i].c_str()));
+            }
+            formeAAjouter=new Polyligne(args[1],coordonnees);
+            nouvelleCommande=new CommandeAjoutFormeGeo(maStructure,formeAAjouter);
+            if(nouvelleCommande->FaireCommande())
+            {
+                eraseAllFrom(etatCourant);
+                listeEtats.push_back(nouvelleCommande);
+                etatCourant++;
+                fait=true;
+                cout<<"OK"<<endl;
+            }else{
+                cout<<"ERR"<<endl;
+            }
         }else if(args[0].compare("S")==0){
             Rectangle r(args[1]+"RectangleAssociee",atoi(args[2].c_str()),atoi(args[3].c_str()),atoi(args[4].c_str()),atoi(args[5].c_str()));
             selectionAAjouter=new Selection(args[1],&r);
@@ -92,17 +121,19 @@ void Application::LancerApplication ()
                 eraseAllFrom(etatCourant);
                 listeEtats.push_back(nouvelleCommande);
                 etatCourant++;
+                fait=true;
                 cout<<"OK"<<endl;
             }else{
                 cout<<"ERR"<<endl;
             }
         }else if(args[0].compare("MOVE")==0){
-            nouvelleCommande=new CommandeDeplacer(maStructure,args[1],atoi(args[2].c_str()),atoi(args[3].c_str()));;
+            nouvelleCommande=new CommandeDeplacer(maStructure,args[1],atoi(args[2].c_str()),atoi(args[3].c_str()));
             if(nouvelleCommande->FaireCommande())
             {
                 eraseAllFrom(etatCourant);
                 listeEtats.push_back(nouvelleCommande);
                 etatCourant++;
+                fait=true;
                 cout<<"OK"<<endl;
             } else {
                 cout << "ERR" << endl;
@@ -132,6 +163,7 @@ void Application::LancerApplication ()
                     eraseAllFrom(etatCourant);
                     listeEtats.push_back(nouvelleCommande);
                     etatCourant++;
+                    fait=true;
                     cout<<"OK"<<endl;
                 } else {
                     cout << "ERR" << endl;
@@ -148,6 +180,7 @@ void Application::LancerApplication ()
                 eraseAllFrom(etatCourant);
                 listeEtats.push_back(nouvelleCommande);
                 etatCourant++;
+                fait=true;
                 cout<<"OK"<<endl;
             } else {
                 cout << "ERR" << endl;
@@ -194,10 +227,18 @@ bool Application::undo()
     }
     else
     {
-        res =(*etatCourant)->DefaireCommande();
-        if(res && etatCourant != listeEtats.begin())
+        if(!fait)
         {
-            etatCourant--;
+            if(etatCourant != listeEtats.begin())
+            {
+                etatCourant--;
+            }
+            res =(*etatCourant)->DefaireCommande();
+        }
+        else
+        {
+            res =(*etatCourant)->DefaireCommande();
+            fait=false;
         }
     }
     return res;
@@ -211,9 +252,18 @@ bool Application::redo()
         res=true;
     }
     else {
-        res = (*etatCourant)->FaireCommande();
-        if (etatCourant != (--listeEtats.end())) {
-            etatCourant++;
+        if(fait)
+        {
+            if(etatCourant != (--listeEtats.end()))
+            {
+                etatCourant++;
+            }
+            res =(*etatCourant)->FaireCommande();
+        }
+        else
+        {
+            res =(*etatCourant)->FaireCommande();
+            fait=true;
         }
     }
     return res;
